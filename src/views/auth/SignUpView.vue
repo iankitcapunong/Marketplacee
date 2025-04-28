@@ -14,7 +14,7 @@ const visible = ref(false)
       <v-col cols="8" md="8">
         <v-card class="mx-auto mt-13 card-2" elevation="16" max-width="500">
           <v-card-item class="text-center pt-2">
-            <v-card-title class="font-weight-black">Marketplace</v-card-title>npk
+            <v-card-title class="font-weight-black">Marketplace</v-card-title>
             <v-card-subtitle class="font-weight-light">CREATE ACCOUNT</v-card-subtitle>
           </v-card-item>
 
