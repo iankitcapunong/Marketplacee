@@ -1,5 +1,7 @@
 <script setup>
 const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits', 'Spices']
+import raweggsImg from '@/assets/images/raweggs.jpeg'
+import tomatoImg from '@/assets/images/tomato.jpeg'
 </script>
 
 <template>
@@ -23,17 +25,18 @@ const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits', 'Spices']
     </v-app-bar>
 
     <!-- Today's Pick Section -->
-    <v-container class="mt-10">
+
+    <v-container class="mt-15 cons" style="background-color: beige; min-height: 100vh; width: 100%">
       <h2 class="text-h5 font-weight-bold mb-4">TODAY'S PICK</h2>
       <v-row>
         <v-col cols="12" md="8">
           <v-card class="overflow-hidden" height="250px">
-            <v-img src="/images/farmer.jpeg" cover height="100%">
-              <v-container fill-height fluid class="d-flex align-end pa-4">
-                <div class="text-white">
+            <v-img :src="tomatoImg" cover height="100%">
+              <v-container fill-height class="d-flex align-end pa-4">
+                <div class="white--text">
                   <h3>Fresh Tomato</h3>
                   <div>SALE UP TO <span class="text-green font-weight-bold">50% OFF</span></div>
-                  <v-btn class="mt-2" color="white" variant="text">BUY NOW</v-btn>
+                  <v-btn class="mt-2" color="white" text>BUY NOW</v-btn>
                 </div>
               </v-container>
             </v-img>
@@ -42,12 +45,8 @@ const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits', 'Spices']
 
         <v-col cols="12" md="4">
           <v-card class="overflow-hidden" height="250px">
-            <v-img
-              src="https://images.unsplash.com/photo-1600478892189-0418f1083ed2?auto=format&fit=crop&w=800&q=60"
-              cover
-              height="100%"
-            >
-              <v-container fill-height fluid class="d-flex align-end pa-4">
+            <v-img :src="raweggsImg" cover height="100%">
+              <v-container fill-height class="d-flex align-end pa-4">
                 <div class="white--text">
                   <h3>Chicken Eggs</h3>
                   <div>Fresh from farm</div>
@@ -75,5 +74,13 @@ const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits', 'Spices']
 <style scoped>
 .white--text {
   color: white;
+}
+
+h3 {
+  padding-top: 120px;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.cons {
+  padding-top: 50px;
 }
 </style>
