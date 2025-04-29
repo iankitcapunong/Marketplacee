@@ -1,86 +1,109 @@
 <script setup>
-const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits', 'Spices']
-import raweggsImg from '@/assets/images/raweggs.jpeg'
+import { ref } from 'vue'
+
+const drawer = ref(false)
 import tomatoImg from '@/assets/images/tomato.jpeg'
+import raweggsImg from '@/assets/images/raweggs.jpeg'
 </script>
 
 <template>
   <v-app>
-    <!-- Top Green Bar -->
-    <v-app-bar color="green" density="comfortable">
-      <v-container class="d-flex align-center">
-        <v-text-field
-          class="ml-4"
-          placeholder="Search anything..."
-          variant="solo-filled"
-          density="comfortable"
-          hide-details
-          append-inner-icon="mdi-magnify"
-        />
-        <v-spacer />
-        <v-avatar color="white" size="40">
-          <span class="text-black font-weight-bold">KD</span>
-        </v-avatar>
-      </v-container>
+    <!-- Top App Bar -->
+    <v-app-bar app color="green" dark>
+      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-text-field
+        hide-details
+        flat
+        variant="solo"
+        prepend-inner-icon="mdi-magnify"
+        placeholder="Search anything..."
+        class="mx-4"
+      ></v-text-field>
+      <v-spacer></v-spacer>
+      <v-avatar color="white">
+        <span class="text-black font-weight-bold">KD</span>
+      </v-avatar>
     </v-app-bar>
 
-    <!-- Today's Pick Section -->
+    <!-- Navigation Drawer -->
+    <v-navigation-drawer v-model="drawer" app temporary>
+      <v-list>
+        <router-link to="/Dashboard" class="text-decoration-none text-black">
+          <v-list-item>
+            <v-list-item-title class="font-weight-bold">Dashboard</v-list-item-title>
+          </v-list-item></router-link
+        >
+        <v-list-item>
+          <v-list-item-title class="font-weight-bold">Categories</v-list-item-title>
+        </v-list-item>
+        <v-list-item>
+          <v-list-item-title class="font-weight-bold">Account Settings</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
 
-    <v-container class="mt-15 cons" style="background-color: beige; min-height: 100vh; width: 100%">
-      <h2 class="text-h5 font-weight-bold mb-4">TODAY'S PICK</h2>
-      <v-row>
-        <v-col cols="12" md="8">
-          <v-card class="overflow-hidden" height="250px">
-            <v-img :src="tomatoImg" cover height="100%">
-              <v-container fill-height class="d-flex align-end pa-4">
-                <div class="white--text">
-                  <h3>Fresh Tomato</h3>
-                  <div>SALE UP TO <span class="text-green font-weight-bold">50% OFF</span></div>
-                  <v-btn class="mt-2" color="white" text>BUY NOW</v-btn>
-                </div>
-              </v-container>
-            </v-img>
-          </v-card>
-        </v-col>
+    <v-main>
+      <v-container fluid style="background-color: beige; min-height: 100vh; width: 100%">
+        <h4 class="text-h5 font-weight-bold mb-4">TODAY'S PICK</h4>
+        <v-row>
+          <v-col cols="12 ps-10 pt-10" md="8">
+            <v-card class="overflow-hidden" height="250px">
+              <v-img :src="tomatoImg" cover height="100%">
+                <v-container fill-height class="d-flex align-end pa-4">
+                  <div class="white-text">
+                    <h3>Fresh Tomato</h3>
+                    <div>SALE UP TO <span class="text-green font-weight-bold">50% OFF</span></div>
+                    <v-btn class="mt-2" color="white" text>View</v-btn>
+                  </div>
+                </v-container>
+              </v-img>
+            </v-card>
+          </v-col>
 
-        <v-col cols="12" md="4">
-          <v-card class="overflow-hidden" height="250px">
-            <v-img :src="raweggsImg" cover height="100%">
-              <v-container fill-height class="d-flex align-end pa-4">
-                <div class="white--text">
-                  <h3>Chicken Eggs</h3>
-                  <div>Fresh from farm</div>
-                  <v-btn class="mt-2" color="white" text>SHOP NOW</v-btn>
-                </div>
-              </v-container>
-            </v-img>
-          </v-card>
-        </v-col>
-      </v-row>
+          <v-col cols="12 pr-10 pt-10" md="4">
+            <v-card class="overflow-hidden" height="250px">
+              <v-img :src="raweggsImg" cover height="100%">
+                <v-container fill-height class="d-flex align-end pa-4">
+                  <div class="white-text">
+                    <h3>Chicken Eggs</h3>
+                    <div>Fresh from farm</div>
+                    <v-btn class="mt-2" color="white" text>View</v-btn>
+                  </div>
+                </v-container>
+              </v-img>
+            </v-card>
+          </v-col>
+        </v-row>
 
-      <!-- Popular Categories -->
-      <h2 class="text-h5 font-weight-bold mt-10 mb-4">POPULAR CATEGORIES</h2>
-      <v-row justify="center" dense>
-        <v-col v-for="(category, index) in categories" :key="index" cols="auto">
-          <v-btn color="green" class="text-white">
-            {{ category }}
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
+        <h4 class="text-h5 font-weight-bold my-4">POPULAR CATEGORIES</h4>
+        <v-row>
+          <v-col
+            cols="6 ml-11 pt-15"
+            md="2"
+            v-for="category in ['Vegetables', 'Fish', 'Meat', 'Fruits', 'Spices']"
+            :key="category"
+          >
+            <v-btn block color="green" class="white--text">{{ category }}</v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 
 <style scoped>
-.white--text {
+.v-img > .v-container {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+}
+.white-text {
   color: white;
+  padding-top: 110px;
 }
-
-h3 {
-  padding-top: 120px;
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+h4 {
+  padding-left: 25px;
+  padding-top: 30px;
 }
-.cons {
-  padding-top: 50px;
+* {
+  font-family: 'Arial';
 }
 </style>
