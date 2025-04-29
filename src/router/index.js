@@ -3,6 +3,7 @@ import LogInView from '@/views/auth/LogInView.vue'
 import SignUpView from '@/views/auth/SignUpView.vue'
 import DashboardView from '@/views/auth/DashboardView.vue'
 import CategoriesView from '@/views/auth/CategoriesView.vue'
+import AccountSettingsView from '@/views/auth/AccountSettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/categories',
       name: 'Categories',
       component: CategoriesView,
+    },
+    {
+      path: '/accountsettings',
+      name: 'AccountSettings',
+      component: AccountSettingsView,
     },
   ],
 })

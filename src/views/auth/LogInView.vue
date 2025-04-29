@@ -1,7 +1,25 @@
 <script setup>
+import { requiredValidator, emailValidator } from '@/utils/validators'
 import { ref } from 'vue'
 
-const visible = ref(false)
+const isPasswordVisible = ref(false)
+const refVform = ref()
+
+const formDataDefault = {
+  email: '',
+  password: '',
+}
+const formData = ref({ ...formDataDefault })
+
+const onLogin = () => {
+  // alert(formData.Value)
+}
+
+const onFormSubmit = () => {
+  refVform.value?.validate().then(({ valid }) => {
+    if (valid) onLogin()
+  })
+}
 </script>
 
 <template>
@@ -16,48 +34,50 @@ const visible = ref(false)
         <v-card class="mx-auto mt-16 card" elevation="16" max-width="500">
           <v-card-item class="text-center pt-6">
             <v-card-title class="font-weight-black">Marketplace</v-card-title>
-
             <v-card-subtitle class="font-weight-light">LOG IN TO CONTINUE</v-card-subtitle>
           </v-card-item>
 
-          <div class="text-subtitle-1 text-medium-emphasis pt-5">Email</div>
+          <v-form ref="refVform" @submit.prevent="onFormSubmit">
+            <div class="text-subtitle-1 text-medium-emphasis pt-5">Email</div>
 
-          <v-text-field
-            density="compact"
-            placeholder="Email address"
-            prepend-inner-icon="mdi-email-outline"
-            variant="outlined"
-          ></v-text-field>
+            <v-text-field
+              v-model="formData.email"
+              density="compact"
+              placeholder="Email address"
+              prepend-inner-icon="mdi-email-outline"
+              :rules="[requiredValidator, emailValidator]"
+              variant="outlined"
+            ></v-text-field>
 
-          <div
-            class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between text-green"
-          >
-            Password
-          </div>
+            <div
+              class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between text-green"
+            >
+              Password
+            </div>
 
-          <v-text-field
-            :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-            :type="visible ? 'text' : 'password'"
-            density="compact"
-            placeholder="Enter your password"
-            prepend-inner-icon="mdi-lock-outline"
-            variant="outlined"
-            @click:append-inner="visible = !visible"
-          ></v-text-field>
+            <v-text-field
+              v-model="formData.password"
+              :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
+              :type="isPasswordVisible ? 'text' : 'password'"
+              density="compact"
+              placeholder="Enter your password"
+              prepend-inner-icon="mdi-lock-outline"
+              variant="outlined"
+              @click:append-inner="isPasswordVisible = !isPasswordVisible"
+              :rules="[requiredValidator]"
+            ></v-text-field>
 
-          <a
-            class="text-caption text-decoration-none text-green text-right"
-            href="#"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Forgot password?</a
-          >
-          <router-link to="/Dashboard" class="text-decoration-none">
-            <v-btn class="mt-4" color="green" size="default" variant="tonal" block
-              >Log In
-            </v-btn></router-link
-          >
+            <v-btn
+              class="mt-4"
+              color="green"
+              size="default"
+              variant="tonal"
+              block
+              @click="onFormSubmit"
+            >
+              Log In
+            </v-btn>
+          </v-form>
 
           <v-card-text class="text-center text">
             New User?
@@ -68,8 +88,9 @@ const visible = ref(false)
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Sign up now <v-icon icon="mdi-chevron-right"></v-icon> </a
-            ></router-link>
+                Sign up now <v-icon icon="mdi-chevron-right"></v-icon>
+              </a>
+            </router-link>
           </v-card-text>
         </v-card>
       </v-col>
@@ -77,7 +98,7 @@ const visible = ref(false)
   </v-container>
 </template>
 
-<style scooped>
+<style scoped>
 .image {
   padding-top: 15%;
   padding-left: 5%;
