@@ -13,11 +13,24 @@ import melonImg from '@/assets/images/melon.jpeg'
 import porkbellyImg from '@/assets/images/porkbelly.jpeg'
 import dilisImg from '@/assets/images/dilis.jpeg'
 
-const selectedCategory = ref()
+const selectedCategory = ref(null)
 const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
 
 const selectCategory = (category) => {
   selectedCategory.value = category
+}
+
+const products = {
+  all: [
+    { name: 'SAYOTE', price: 10, image: sayoteImg, type: 'Vegetables' },
+    { name: 'PINEAPPLE', price: 160, image: pinyaImg, type: 'Fruits' },
+    { name: 'BANANA (LAKATAN)', price: 50, image: sagingImg, type: 'Fruits' },
+    { name: 'Chicken', price: 260, image: chickenImg, type: 'Meat' },
+    { name: 'Watermelon', price: 50, image: melonImg, type: 'Fruits' },
+    { name: 'Pork Chops', price: 200, image: porkchopsImg, type: 'Meat' },
+    { name: 'Pork Belly', price: 300, image: porkbellyImg, type: 'Meat' },
+    { name: 'Dilis', price: 100, image: dilisImg, type: 'Fish' },
+  ],
 }
 </script>
 
@@ -73,119 +86,45 @@ const selectCategory = (category) => {
 
     <v-main>
       <v-container fluid style="background-color: beige; min-height: 100vh">
-        <v-row v-if="!selectedCategory" class="pa-4">
+        <v-row class="pa-4">
           <v-col cols="12">
-            <h1 class="text-h4 font-weight-bold mb-4">MOST BUY IN STORE</h1>
+            <h1 v-if="!selectedCategory" class="text-h4 font-weight-bold mb-4">
+              MOST BUY IN STORE
+            </h1>
+            <h1 v-else class="text-h4 font-weight-bold mb-4">{{ selectedCategory }}</h1>
 
             <v-row>
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="sayoteImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">SAYOTE</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱10</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
+              <template v-if="!selectedCategory">
+                <v-col v-for="(product, index) in products.all" :key="index" cols="12" md="3">
+                  <v-card class="pa-4 text-center">
+                    <v-img :src="product.image" height="100" contain></v-img>
+                    <div class="font-weight-bold mt-2">{{ product.name }}</div>
+                    <div>Per Kilo</div>
+                    <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
+                    <div>Butuan City, PH-13</div>
+                  </v-card>
+                </v-col>
+              </template>
 
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="pinyaImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">PINEAPPLE</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱160</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="sagingImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">BANANA (LAKATAN)</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱50</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="chickenImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">Chicken</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱260</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="melonImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">Watermelon</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱50</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="porkchopsImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">Pork Chops</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱200</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="porkbellyImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">Pork Belly</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱300</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="dilisImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">Dilis</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱100</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
+              <template v-else>
+                <v-col
+                  v-for="(product, index) in products.all.filter(
+                    (p) => p.type === selectedCategory,
+                  )"
+                  :key="index"
+                  cols="12"
+                  md="3"
+                >
+                  <v-card class="pa-4 text-center">
+                    <v-img :src="product.image" height="100" contain></v-img>
+                    <div class="font-weight-bold mt-2">{{ product.name }}</div>
+                    <div>Per Kilo</div>
+                    <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
+                    <div>Butuan City, PH-13</div>
+                  </v-card>
+                </v-col>
+              </template>
             </v-row>
-
-            <v-row v-if="selectedCategory === 'Vegetables'" class="mt-6">
-              <v-col cols="12">
-                <h2 class="text-h5 font-weight-bold mb-4">Vegetables</h2>
-              </v-col>
-
-              <v-col cols="12" md="3">
-                <v-card class="pa-4 text-center">
-                  <v-img :src="sayoteImg" height="100" contain></v-img>
-                  <div class="font-weight-bold mt-2">SAYOTE</div>
-                  <div>Per Kilo</div>
-                  <div class="text-h6 font-weight-bold">₱10</div>
-                  <div>Butuan City, PH-13</div>
-                </v-card>
-              </v-col>
-
-              <!-- Add more vegetable products here if needed -->
-            </v-row>
-
-            <v-col v-if="selectedCategory === 'Meat'" cols="12" md="3">
-              <v-card class="pa-4 text-center">
-                <v-img :src="beefImg" height="100" contain></v-img>
-                <div class="font-weight-bold mt-2">BEEF</div>
-                <div>Per Kilo</div>
-                <div class="text-h6 font-weight-bold">₱350</div>
-                <div>Butuan City, PH-13</div>
-              </v-card>
-            </v-col>
           </v-col>
         </v-row>
       </v-container>
