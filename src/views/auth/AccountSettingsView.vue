@@ -13,19 +13,6 @@ function selectItem(item) {
   activeItem.value = item
 }
 
-// My Order logic
-const quantity = ref(1)
-const unitPrice = 120
-const total = computed(() => quantity.value * unitPrice)
-
-function increaseQty() {
-  quantity.value++
-}
-function decreaseQty() {
-  if (quantity.value > 1) quantity.value--
-}
-
-//Image import
 import ManggoImg from '@/assets/images/Manggo.jpeg'
 </script>
 
@@ -59,7 +46,7 @@ import ManggoImg from '@/assets/images/Manggo.jpeg'
           </v-card>
         </v-col>
 
-        <v-col cols="12 pt-4" md="8">
+        <v-col cols="12 pt-2" md="8">
           <!-- Account Info -->
           <v-card v-if="activeItem === 'Account info'" class="pa-6" elevation="2">
             <h2 class="mb-6">Account Info</h2>
@@ -83,59 +70,6 @@ import ManggoImg from '@/assets/images/Manggo.jpeg'
               </v-col>
             </v-row>
             <v-btn color="green" class="mt-4" large>Save</v-btn>
-          </v-card>
-
-          <!-- My Order -->
-          <v-card v-if="activeItem === 'My order'" class="pa-6" elevation="2">
-            <h2 class="mb-6">My Order</h2>
-            <v-card class="pa-4 mb-6">
-              <v-row>
-                <v-col cols="12" md="4">
-                  <v-img :src="ManggoImg" height="100" contain />
-                </v-col>
-                <v-col cols="12" md="8">
-                  <div class="text-subtitle-1 font-weight-bold">Mango (Per kilo)</div>
-                  <div class="text-subtitle-2">₱{{ unitPrice }}</div>
-                  <v-btn icon @click="decreaseQty"><v-icon>mdi-minus</v-icon></v-btn>
-                  <span class="mx-2">{{ quantity }}</span>
-                  <v-btn icon @click="increaseQty"><v-icon>mdi-plus</v-icon></v-btn>
-                </v-col>
-              </v-row>
-            </v-card>
-
-            <v-card class="pa-4 mb-4">
-              <h3 class="mb-4">Order Summary</h3>
-              <v-simple-table>
-                <thead>
-                  <tr>
-                    <th class="pr-2">Item</th>
-                    <th class="pl-2">Quantity</th>
-                    <th class="pl-3">Unit Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Mango</td>
-                    <td class="pl-8">{{ quantity }}</td>
-                    <td class="pl-4">₱{{ unitPrice.toFixed(2) }}</td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
-              <div class="mt-4 font-weight-bold">ORDER TOTAL: ₱{{ total.toFixed(2) }}</div>
-              <v-btn color="green" class="mt-2">Checkout</v-btn>
-            </v-card>
-
-            <v-card class="pa-4">
-              <h3 class="mb-2">Payment Method</h3>
-              <div class="d-flex justify-space-between align-center">
-                <span>Cash On Delivery</span>
-                <a href="#">Change</a>
-              </div>
-              <div class="mt-4">
-                Total Payment: <strong>₱{{ total.toFixed(2) }}</strong>
-              </div>
-              <v-btn color="green" class="mt-4">Place Order</v-btn>
-            </v-card>
           </v-card>
         </v-col>
       </v-row>
