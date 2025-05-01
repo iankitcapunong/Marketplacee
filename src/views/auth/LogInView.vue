@@ -12,7 +12,7 @@ const formDataDefault = {
 const formData = ref({ ...formDataDefault })
 
 const onLogin = () => {
-  // alert(formData.Value)
+  alert(formData.Value)
 }
 
 const onFormSubmit = () => {
@@ -66,17 +66,18 @@ const onFormSubmit = () => {
               @click:append-inner="isPasswordVisible = !isPasswordVisible"
               :rules="[requiredValidator]"
             ></v-text-field>
-
-            <v-btn
-              class="mt-4"
-              color="green"
-              size="default"
-              variant="tonal"
-              block
-              @click="onFormSubmit"
-            >
-              Log In
-            </v-btn>
+            <router-link to="/Dashboard" class="text-decoration-none">
+              <v-btn
+                class="mt-4"
+                color="green"
+                size="default"
+                variant="tonal"
+                block
+                @click="onFormSubmit"
+              >
+                Log In
+              </v-btn>
+            </router-link>
           </v-form>
 
           <v-card-text class="text-center text">
@@ -116,5 +117,8 @@ body {
 }
 .text {
   font-size: small;
+}
+* {
+  font-family: 'Arial';
 }
 </style>

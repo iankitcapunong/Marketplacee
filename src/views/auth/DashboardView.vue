@@ -8,7 +8,6 @@ import raweggsImg from '@/assets/images/raweggs.jpeg'
 
 <template>
   <v-app>
-    <!-- Top App Bar -->
     <v-app-bar app color="green-lighten-4" variant="" dark>
       <v-app-bar-nav-icon @click="drawer = !drawer" />
       <v-text-field
