@@ -3,7 +3,32 @@ import { ref } from 'vue'
 
 const drawer = ref(true)
 const categoriesOpen = ref(false)
+const selectedCategory = ref(null)
+const selectedProduct = ref(null)
+const quantity = ref(1)
 
+const selectCategory = (category) => {
+  selectedCategory.value = category
+}
+
+const viewProduct = (product) => {
+  selectedProduct.value = product
+  quantity.value = 1
+}
+
+const closeProductView = () => {
+  selectedProduct.value = null
+}
+
+const incrementQty = () => {
+  quantity.value++
+}
+
+const decrementQty = () => {
+  if (quantity.value > 1) quantity.value--
+}
+
+// Images
 import sayoteImg from '@/assets/images/sayote.jpeg'
 import pinyaImg from '@/assets/images/pinya.jpeg'
 import sagingImg from '@/assets/images/saging.jpeg'
@@ -37,12 +62,7 @@ import rambutanImg from '@/assets/images/rambutan.png'
 import appolImg from '@/assets/images/appol.png'
 import mangosteenImg from '@/assets/images/mangosteen.jpeg'
 
-const selectedCategory = ref(null)
 const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
-
-const selectCategory = (category) => {
-  selectedCategory.value = category
-}
 
 const products = {
   all: [
@@ -93,14 +113,14 @@ const products = {
         prepend-inner-icon="mdi-magnify"
         placeholder="Search anything..."
         class="mx-4"
-      ></v-text-field>
-      <v-spacer></v-spacer>
+      />
+      <v-spacer />
       <v-avatar color="white">
         <span class="text-black font-weight-bold">KD</span>
       </v-avatar>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app class="scroll-lockbar">
+    <v-navigation-drawer v-model="drawer" app>
       <v-list>
         <v-list-item to="/Dashboard" class="text-decoration-none text-black">
           <v-list-item-title class="font-weight-bold">Dashboard</v-list-item-title>
@@ -118,9 +138,7 @@ const products = {
             :key="i"
             class="text-black"
             @click="selectCategory(category)"
-            :class="{
-              'bg-green-lighten-1 text-white': selectedCategory === category,
-            }"
+            :class="{ 'bg-green-lighten-1 text-white': selectedCategory === category }"
           >
             <v-list-item-title>{{ category }}</v-list-item-title>
           </v-list-item>
@@ -149,8 +167,12 @@ const products = {
                   cols="12"
                   md="3"
                 >
-                  <v-card class="pa-4 text-center rounded-shaped">
-                    <v-img :src="product.image" height="100" contain></v-img>
+                  <v-card
+                    class="pa-4 text-center rounded-shaped"
+                    @click="viewProduct(product)"
+                    style="cursor: pointer"
+                  >
+                    <v-img :src="product.image" height="100" contain />
                     <div class="font-weight-bold mt-2">{{ product.name }}</div>
                     <div>Per Kilo</div>
                     <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
@@ -168,8 +190,12 @@ const products = {
                   cols="12"
                   md="3"
                 >
-                  <v-card class="pa-4 text-center rounded-shaped">
-                    <v-img :src="product.image" height="100" contain></v-img>
+                  <v-card
+                    class="pa-4 text-center rounded-shaped"
+                    @click="viewProduct(product)"
+                    style="cursor: pointer"
+                  >
+                    <v-img :src="product.image" height="100" contain />
                     <div class="font-weight-bold mt-2">{{ product.name }}</div>
                     <div>Per Kilo</div>
                     <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
@@ -180,6 +206,40 @@ const products = {
             </v-row>
           </v-col>
         </v-row>
+
+        <!-- Product Detail Modal -->
+        <v-dialog v-model="selectedProduct" fullscreen transition="dialog-bottom-transition">
+          <v-card>
+            <v-toolbar flat>
+              <v-btn icon @click="closeProductView"><v-icon>mdi-close</v-icon></v-btn>
+              <v-toolbar-title>{{ selectedProduct?.name }}</v-toolbar-title>
+            </v-toolbar>
+
+            <v-container>
+              <v-row>
+                <v-col cols="12" md="6">
+                  <v-img :src="selectedProduct?.image" height="300" contain />
+                </v-col>
+                <v-col cols="12" md="6">
+                  <h2 class="text-h4 font-weight-bold mb-2">₱{{ selectedProduct?.price }}</h2>
+                  <p>Fresh and locally sourced product.</p>
+                  <v-icon color="green" class="mr-1">mdi-check-circle</v-icon> In stock
+
+                  <v-divider class="my-4" />
+
+                  <div class="mb-2 font-weight-bold">Qty</div>
+                  <v-btn icon @click="decrementQty"><v-icon>mdi-minus</v-icon></v-btn>
+                  <span class="mx-2 text-h6">{{ quantity }}</span>
+                  <v-btn icon @click="incrementQty"><v-icon>mdi-plus</v-icon></v-btn>
+
+                  <v-btn color="green" class="mt-4" large>ADD TO CART</v-btn>
+
+                  <p class="mt-4 text-caption">Guaranteed Safe Checkout</p>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card>
+        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
@@ -189,11 +249,9 @@ const products = {
 .text-decoration-none {
   text-decoration: none;
 }
-
 .bg-beige {
   background-color: beige;
 }
-
 * {
   font-family: 'Arial';
 }
