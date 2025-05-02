@@ -13,12 +13,29 @@ import melonImg from '@/assets/images/melon.jpeg'
 import porkbellyImg from '@/assets/images/porkbelly.jpeg'
 import dilisImg from '@/assets/images/dilis.jpeg'
 import fishImg from '@/assets/images/fish.jpeg'
-import bangus1Img from '@/assets/images/bangus1.jpeg'
+import tunaImg from '@/assets/images/tuna.jpg'
 import tilapiaImg from '@/assets/images/tilapia.jpeg'
 import galungongImg from '@/assets/images/galungong.png'
 import sapsapImg from '@/assets/images/sapsap.png'
 import tambakolImg from '@/assets/images/tambakol.jpeg'
 import tambanImg from '@/assets/images/tamban.png'
+import cabbageImg from '@/assets/images/cabbage.jpeg'
+import carrrotImg from '@/assets/images/carrrot.jpeg'
+import patatasImg from '@/assets/images/patatas.jpeg'
+import PechayImg from '@/assets/images/Pechay.jpeg'
+import luyaImg from '@/assets/images/luya.jpeg'
+import kalabasaImg from '@/assets/images/kalabasa.jpeg'
+import whiteradishImg from '@/assets/images/whiteradish.jpeg'
+import drumstickImg from '@/assets/images/drumstick.jpeg'
+import beefImg from '@/assets/images/beef.jpeg'
+import chickenwingsImg from '@/assets/images/chickenwings.jpg'
+import spareribsImg from '@/assets/images/spareribs.jpg'
+import breastImg from '@/assets/images/breast.jpg'
+import ManggoImg from '@/assets/images/Manggo.jpeg'
+import tomatowhiteImg from '@/assets/images/tomatowhite.jpeg'
+import rambutanImg from '@/assets/images/rambutan.png'
+import appolImg from '@/assets/images/appol.png'
+import mangosteenImg from '@/assets/images/mangosteen.jpeg'
 
 const selectedCategory = ref(null)
 const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
@@ -29,21 +46,38 @@ const selectCategory = (category) => {
 
 const products = {
   all: [
-    { name: 'SAYOTE', price: 10, image: sayoteImg, type: 'Vegetables' },
-    { name: 'PINEAPPLE', price: 160, image: pinyaImg, type: 'Fruits' },
-    { name: 'BANANA (LAKATAN)', price: 50, image: sagingImg, type: 'Fruits' },
+    { name: 'Sayote', price: 10, image: sayoteImg, type: 'Vegetables' },
+    { name: 'Pineapple', price: 160, image: pinyaImg, type: 'Fruits' },
+    { name: 'Banana (LAKATAN)', price: 50, image: sagingImg, type: 'Fruits' },
     { name: 'Chicken', price: 260, image: chickenImg, type: 'Meat' },
     { name: 'Watermelon', price: 50, image: melonImg, type: 'Fruits' },
     { name: 'Pork Chops', price: 200, image: porkchopsImg, type: 'Meat' },
     { name: 'Pork Belly', price: 300, image: porkbellyImg, type: 'Meat' },
     { name: 'Dilis', price: 100, image: dilisImg, type: 'Fish' },
-    { name: 'MilkFish', price: 120, image: fishImg, type: 'Fish' },
-    { name: 'Bangus', price: 120, image: bangus1Img, type: 'Fish' },
+    { name: 'Milk Fish', price: 120, image: fishImg, type: 'Fish' },
+    { name: 'Tuna', price: 170, image: tunaImg, type: 'Fish' },
     { name: 'Tilapia', price: 150, image: tilapiaImg, type: 'Fish' },
     { name: 'Galungong', price: 100, image: galungongImg, type: 'Fish' },
     { name: 'Sapsap', price: 250, image: sapsapImg, type: 'Fish' },
     { name: 'Tambakol', price: 200, image: tambakolImg, type: 'Fish' },
-    { name: 'Tamban', price: 100, image: tambanImg, type: 'Fish' },
+    { name: 'Tamban', price: 200, image: tambanImg, type: 'Fish' },
+    { name: 'Cabbage', price: 26, image: cabbageImg, type: 'Vegetables' },
+    { name: 'Carrots', price: 75, image: carrrotImg, type: 'Vegetables' },
+    { name: 'Potato', price: 150, image: patatasImg, type: 'Vegetables' },
+    { name: 'Pechay', price: 50, image: PechayImg, type: 'Vegetables' },
+    { name: 'Ginger', price: 70, image: luyaImg, type: 'Vegetables' },
+    { name: 'Kalabasa', price: 50, image: kalabasaImg, type: 'Vegetables' },
+    { name: 'White Radish', price: 50, image: whiteradishImg, type: 'Vegetables' },
+    { name: 'Chicken Drumstick', price: 150, image: drumstickImg, type: 'Meat' },
+    { name: 'Beef', price: 370, image: beefImg, type: 'Meat' },
+    { name: 'Chicken Wings', price: 150, image: chickenwingsImg, type: 'Meat' },
+    { name: 'Pork Spare Ribs', price: 320, image: spareribsImg, type: 'Meat' },
+    { name: 'Chicken Breast', price: 120, image: breastImg, type: 'Meat' },
+    { name: 'Manggo', price: 120, image: ManggoImg, type: 'Fruits' },
+    { name: 'Tomato', price: 70, image: tomatowhiteImg, type: 'Fruits' },
+    { name: 'Rambutan', price: 80, image: rambutanImg, type: 'Fruits' },
+    { name: 'Apple', price: 160, image: appolImg, type: 'Fruits' },
+    { name: 'Mangosteen', price: 120, image: mangosteenImg, type: 'Fruits' },
   ],
 }
 </script>
@@ -100,7 +134,7 @@ const products = {
 
     <v-main>
       <v-container fluid style="background-color: beige; min-height: 100vh">
-        <v-row class="pa-4">
+        <v-row class="pa-4 rounded-shaped">
           <v-col cols="12">
             <h1 v-if="!selectedCategory" class="text-h4 font-weight-bold mb-4">
               MOST BUY IN STORE
@@ -115,7 +149,7 @@ const products = {
                   cols="12"
                   md="3"
                 >
-                  <v-card class="pa-4 text-center">
+                  <v-card class="pa-4 text-center rounded-shaped">
                     <v-img :src="product.image" height="100" contain></v-img>
                     <div class="font-weight-bold mt-2">{{ product.name }}</div>
                     <div>Per Kilo</div>
@@ -134,7 +168,7 @@ const products = {
                   cols="12"
                   md="3"
                 >
-                  <v-card class="pa-4 text-center">
+                  <v-card class="pa-4 text-center rounded-shaped">
                     <v-img :src="product.image" height="100" contain></v-img>
                     <div class="font-weight-bold mt-2">{{ product.name }}</div>
                     <div>Per Kilo</div>
