@@ -4,6 +4,9 @@ import { ref } from 'vue'
 const drawer = ref(false)
 import tomatoImg from '@/assets/images/tomato.jpeg'
 import raweggsImg from '@/assets/images/raweggs.jpeg'
+const signOut = () => {
+  console.log('Log In')
+}
 </script>
 
 <template>
@@ -19,9 +22,9 @@ import raweggsImg from '@/assets/images/raweggs.jpeg'
         class="mx-4"
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-avatar color="white">
-        <span class="text-black font-weight-bold">KD</span>
-      </v-avatar>
+      <v-btn icon @click="signOut" color="white">
+        <v-icon color="black">mdi-logout</v-icon>
+      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" class="lock-scrollbar" app>
