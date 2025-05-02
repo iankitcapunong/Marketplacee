@@ -66,18 +66,17 @@ const onFormSubmit = () => {
               @click:append-inner="isPasswordVisible = !isPasswordVisible"
               :rules="[requiredValidator]"
             ></v-text-field>
-            <router-link to="/Dashboard" class="text-decoration-none">
-              <v-btn
-                class="mt-4"
-                color="green"
-                size="default"
-                variant="tonal"
-                block
-                @click="onFormSubmit"
-              >
-                Log In
-              </v-btn>
-            </router-link>
+
+            <v-btn
+              class="mt-4"
+              color="green"
+              size="default"
+              variant="tonal"
+              block
+              @click="onFormSubmit"
+            >
+              Log In
+            </v-btn>
           </v-form>
 
           <v-card-text class="text-center text">

@@ -12,6 +12,13 @@ import porkchopsImg from '@/assets/images/porkchops.png'
 import melonImg from '@/assets/images/melon.jpeg'
 import porkbellyImg from '@/assets/images/porkbelly.jpeg'
 import dilisImg from '@/assets/images/dilis.jpeg'
+import fishImg from '@/assets/images/fish.jpeg'
+import bangus1Img from '@/assets/images/bangus1.jpeg'
+import tilapiaImg from '@/assets/images/tilapia.jpeg'
+import galungongImg from '@/assets/images/galungong.png'
+import sapsapImg from '@/assets/images/sapsap.png'
+import tambakolImg from '@/assets/images/tambakol.jpeg'
+import tambanImg from '@/assets/images/tamban.png'
 
 const selectedCategory = ref(null)
 const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
@@ -30,6 +37,13 @@ const products = {
     { name: 'Pork Chops', price: 200, image: porkchopsImg, type: 'Meat' },
     { name: 'Pork Belly', price: 300, image: porkbellyImg, type: 'Meat' },
     { name: 'Dilis', price: 100, image: dilisImg, type: 'Fish' },
+    { name: 'MilkFish', price: 120, image: fishImg, type: 'Fish' },
+    { name: 'Bangus', price: 120, image: bangus1Img, type: 'Fish' },
+    { name: 'Tilapia', price: 150, image: tilapiaImg, type: 'Fish' },
+    { name: 'Galungong', price: 100, image: galungongImg, type: 'Fish' },
+    { name: 'Sapsap', price: 250, image: sapsapImg, type: 'Fish' },
+    { name: 'Tambakol', price: 200, image: tambakolImg, type: 'Fish' },
+    { name: 'Tamban', price: 100, image: tambanImg, type: 'Fish' },
   ],
 }
 </script>
@@ -95,7 +109,12 @@ const products = {
 
             <v-row>
               <template v-if="!selectedCategory">
-                <v-col v-for="(product, index) in products.all" :key="index" cols="12" md="3">
+                <v-col
+                  v-for="(product, index) in products.all.slice(0, 8)"
+                  :key="index"
+                  cols="12"
+                  md="3"
+                >
                   <v-card class="pa-4 text-center">
                     <v-img :src="product.image" height="100" contain></v-img>
                     <div class="font-weight-bold mt-2">{{ product.name }}</div>
