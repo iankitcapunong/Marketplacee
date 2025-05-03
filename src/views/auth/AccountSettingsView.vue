@@ -1,3 +1,102 @@
+<script setup>
+import { ref, watch, onMounted } from 'vue'
+
+// Profile Info
+const firstName = ref('')
+const lastName = ref('')
+const email = ref('')
+const phone = ref('')
+
+const activeItem = ref('Account info')
+const items = ['Account info', 'My order', 'My address']
+
+function selectItem(item) {
+  activeItem.value = item
+}
+
+// Address Management
+const addresses = ref([])
+
+onMounted(() => {
+  const stored = localStorage.getItem('addresses')
+  if (stored) {
+    addresses.value = JSON.parse(stored)
+  } else {
+    addresses.value = [
+      {
+        name: 'Kathleen Demain',
+        phone: '+1 0231 4554 452',
+        details: 'Unit 5, Purok 7, Brgy. Ambago, Butuan City, Agusan del Norte, 8600 Philippines',
+        isDefault: true,
+      },
+    ]
+  }
+})
+
+watch(
+  addresses,
+  (newVal) => {
+    localStorage.setItem('addresses', JSON.stringify(newVal))
+  },
+  { deep: true },
+)
+
+const showAddDialog = ref(false)
+const showEditDialog = ref(false)
+
+const tempName = ref('')
+const tempPhone = ref('')
+const tempDetails = ref('')
+const editingIndex = ref(null)
+
+function openAddDialog() {
+  tempName.value = ''
+  tempPhone.value = ''
+  tempDetails.value = ''
+  showAddDialog.value = true
+}
+
+function openEditDialog(index) {
+  const addr = addresses.value[index]
+  tempName.value = addr.name
+  tempPhone.value = addr.phone
+  tempDetails.value = addr.details
+  editingIndex.value = index
+  showEditDialog.value = true
+}
+
+function saveNewAddress() {
+  addresses.value.push({
+    name: tempName.value,
+    phone: tempPhone.value,
+    details: tempDetails.value,
+    isDefault: addresses.value.length === 0,
+  })
+  showAddDialog.value = false
+}
+
+function updateAddress() {
+  const index = editingIndex.value
+  if (index !== null) {
+    addresses.value[index].name = tempName.value
+    addresses.value[index].phone = tempPhone.value
+    addresses.value[index].details = tempDetails.value
+  }
+  showEditDialog.value = false
+}
+
+function setAsDefault(index) {
+  addresses.value.forEach((addr, i) => {
+    addr.isDefault = i === index
+  })
+}
+
+function removeAddress(index) {
+  if (!addresses.value[index].isDefault) {
+    addresses.value.splice(index, 1)
+  }
+}
+</script>
 <template>
   <v-app>
     <v-app-bar app color="green-lighten-4" dark></v-app-bar>
@@ -73,15 +172,9 @@
                     <span> ({{ addr.phone }})</span><br />
                     <span class="text-grey">{{ addr.details }}</span>
                     <div class="mt-2">
-                      <v-btn
-                        size="small"
-                        variant="outlined"
-                        color="green"
-                        v-if="addr.isDefault"
-                        disabled
+                      <v-chip color="green" text-color="white" v-if="addr.isDefault"
+                        >Default</v-chip
                       >
-                        Default
-                      </v-btn>
                     </div>
                   </div>
                 </v-col>
@@ -89,8 +182,22 @@
                   <v-btn variant="text" color="primary" class="mb-2" @click="openEditDialog(index)">
                     Edit </v-btn
                   ><br />
-                  <v-btn variant="outlined" @click="setAsDefault(index)" :disabled="addr.isDefault">
-                    Set as Default
+                  <v-btn
+                    variant="text"
+                    color="green"
+                    class="mb-2"
+                    @click="setAsDefault(index)"
+                    :disabled="addr.isDefault"
+                  >
+                    Set as Default </v-btn
+                  ><br />
+                  <v-btn
+                    variant="text"
+                    color="error"
+                    @click="removeAddress(index)"
+                    :disabled="addr.isDefault"
+                  >
+                    Remove
                   </v-btn>
                 </v-col>
               </v-row>
@@ -135,103 +242,6 @@
     </v-container>
   </v-app>
 </template>
-
-<script setup>
-import { ref, watch, onMounted } from 'vue'
-
-// Profile Info
-const firstName = ref('')
-const lastName = ref('')
-const email = ref('')
-const phone = ref('')
-
-const activeItem = ref('Account info')
-const items = ['Account info', 'My order', 'My address']
-
-function selectItem(item) {
-  activeItem.value = item
-}
-
-// Address Management
-const addresses = ref([])
-
-// Load from localStorage on mount
-onMounted(() => {
-  const stored = localStorage.getItem('addresses')
-  if (stored) {
-    addresses.value = JSON.parse(stored)
-  } else {
-    // Default address
-    addresses.value = [
-      {
-        name: 'Kathleen Demain',
-        phone: '+1 0231 4554 452',
-        details: 'Unit 5, Purok 7, Brgy. Ambago, Butuan City, Agusan del Norte, 8600 Philippines',
-        isDefault: true,
-      },
-    ]
-  }
-})
-
-// Save to localStorage when addresses change
-watch(
-  addresses,
-  (newVal) => {
-    localStorage.setItem('addresses', JSON.stringify(newVal))
-  },
-  { deep: true },
-)
-
-const showAddDialog = ref(false)
-const showEditDialog = ref(false)
-
-const tempName = ref('')
-const tempPhone = ref('')
-const tempDetails = ref('')
-const editingIndex = ref(null)
-
-function openAddDialog() {
-  tempName.value = ''
-  tempPhone.value = ''
-  tempDetails.value = ''
-  showAddDialog.value = true
-}
-
-function openEditDialog(index) {
-  const addr = addresses.value[index]
-  tempName.value = addr.name
-  tempPhone.value = addr.phone
-  tempDetails.value = addr.details
-  editingIndex.value = index
-  showEditDialog.value = true
-}
-
-function saveNewAddress() {
-  addresses.value.push({
-    name: tempName.value,
-    phone: tempPhone.value,
-    details: tempDetails.value,
-    isDefault: addresses.value.length === 0,
-  })
-  showAddDialog.value = false
-}
-
-function updateAddress() {
-  const index = editingIndex.value
-  if (index !== null) {
-    addresses.value[index].name = tempName.value
-    addresses.value[index].phone = tempPhone.value
-    addresses.value[index].details = tempDetails.value
-  }
-  showEditDialog.value = false
-}
-
-function setAsDefault(index) {
-  addresses.value.forEach((addr, i) => {
-    addr.isDefault = i === index
-  })
-}
-</script>
 
 <style scoped>
 .bg-green {
