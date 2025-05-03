@@ -4,9 +4,6 @@ import { ref } from 'vue'
 const drawer = ref(false)
 import tomatoImg from '@/assets/images/tomato.jpeg'
 import raweggsImg from '@/assets/images/raweggs.jpeg'
-const signOut = () => {
-  console.log('Log In')
-}
 </script>
 
 <template>
