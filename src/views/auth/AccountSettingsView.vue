@@ -7,6 +7,7 @@ const lastName = ref('')
 const email = ref('')
 const phone = ref('')
 
+// Sidebar Navigation
 const activeItem = ref('Account info')
 const items = ['Account info', 'My order', 'My address']
 
@@ -16,11 +17,10 @@ function selectItem(item) {
 
 // Address Management
 const addresses = ref([])
-
 onMounted(() => {
-  const stored = localStorage.getItem('addresses')
-  if (stored) {
-    addresses.value = JSON.parse(stored)
+  const storedAddresses = localStorage.getItem('addresses')
+  if (storedAddresses) {
+    addresses.value = JSON.parse(storedAddresses)
   } else {
     addresses.value = [
       {
@@ -30,6 +30,11 @@ onMounted(() => {
         isDefault: true,
       },
     ]
+  }
+
+  const storedPurchases = localStorage.getItem('purchases')
+  if (storedPurchases) {
+    purchases.value = JSON.parse(storedPurchases)
   }
 })
 
@@ -41,6 +46,10 @@ watch(
   { deep: true },
 )
 
+// Orders
+const purchases = ref([])
+
+// Address dialog handling
 const showAddDialog = ref(false)
 const showEditDialog = ref(false)
 
@@ -97,6 +106,7 @@ function removeAddress(index) {
   }
 }
 </script>
+
 <template>
   <v-app>
     <v-app-bar app color="green-lighten-4" dark></v-app-bar>
@@ -149,6 +159,25 @@ function removeAddress(index) {
               </v-col>
             </v-row>
             <v-btn color="green" class="mt-4" large>Save</v-btn>
+          </v-card>
+
+          <!-- My Orders -->
+          <v-card v-if="activeItem === 'My order'" class="pa-6" elevation="2">
+            <h2 class="text-h5 mb-4">My Orders</h2>
+            <v-row>
+              <v-col v-for="(purchase, index) in purchases" :key="index" cols="12" sm="6" md="4">
+                <v-card>
+                  <v-img :src="purchase.image" height="200px" class="rounded-t" cover></v-img>
+                  <v-card-title>{{ purchase.name }}</v-card-title>
+                  <v-card-subtitle class="text-grey">{{ purchase.date }}</v-card-subtitle>
+                  <v-card-text>
+                    <div>Price: ₱{{ purchase.price }}</div>
+                    <div>Quantity: {{ purchase.quantity }}</div>
+                    <div>Total: ₱{{ purchase.price * purchase.quantity }}</div>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
           </v-card>
 
           <!-- My Address -->

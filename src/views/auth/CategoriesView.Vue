@@ -5,27 +5,39 @@ const drawer = ref(true)
 const categoriesOpen = ref(false)
 const selectedCategory = ref(null)
 const selectedProduct = ref(null)
+const dialog = ref(false)
+const product = ref({})
 const quantity = ref(1)
 
 const selectCategory = (category) => {
   selectedCategory.value = category
 }
 
-const viewProduct = (product) => {
-  selectedProduct.value = product
+const viewProduct = (p) => {
+  product.value = p
   quantity.value = 1
+  dialog.value = true
 }
 
-const closeProductView = () => {
-  selectedProduct.value = null
+const close = () => {
+  dialog.value = false
 }
 
-const incrementQty = () => {
-  quantity.value++
-}
+const buy = () => {
+  const newPurchase = {
+    name: product.value.name,
+    price: product.value.price,
+    image: product.value.image,
+    quantity: quantity.value,
+    date: new Date().toLocaleString(),
+  }
 
-const decrementQty = () => {
-  if (quantity.value > 1) quantity.value--
+  const stored = localStorage.getItem('purchases')
+  const purchases = stored ? JSON.parse(stored) : []
+  purchases.push(newPurchase)
+  localStorage.setItem('purchases', JSON.stringify(purchases))
+
+  close()
 }
 
 // Images
@@ -206,37 +218,28 @@ const products = {
             </v-row>
           </v-col>
         </v-row>
-
-        <v-dialog v-model="selectedProduct" fullscreen transition="dialog-bottom-transition">
+        <v-dialog v-model="dialog" max-width="500">
           <v-card>
-            <v-toolbar flat>
-              <v-btn icon @click="closeProductView"><v-icon>mdi-close</v-icon></v-btn>
-              <v-toolbar-title>{{ selectedProduct?.name }}</v-toolbar-title>
-            </v-toolbar>
+            <v-img :src="product.image" height="200px" cover></v-img>
 
-            <v-container>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-img :src="selectedProduct?.image" height="300" contain />
-                </v-col>
-                <v-col cols="12" md="6">
-                  <h2 class="text-h4 font-weight-bold mb-2">₱{{ selectedProduct?.price }}</h2>
-                  <p>Fresh and locally sourced product.</p>
-                  <v-icon color="green" class="mr-1">mdi-check-circle</v-icon> In stock
+            <v-card-title>{{ product.name }}</v-card-title>
 
-                  <v-divider class="my-4" />
+            <v-card-text>
+              <div>Price: ₱{{ product.price }}</div>
 
-                  <div class="mb-2 font-weight-bold">Qty</div>
-                  <v-btn icon @click="decrementQty"><v-icon>mdi-minus</v-icon></v-btn>
-                  <span class="mx-2 text-h6">{{ quantity }}</span>
-                  <v-btn icon @click="incrementQty"><v-icon>mdi-plus</v-icon></v-btn>
+              <v-text-field
+                v-model.number="quantity"
+                type="number"
+                label="Quantity"
+                min="1"
+                class="mt-4"
+              ></v-text-field>
+            </v-card-text>
 
-                  <v-btn color="green" class="mt-4 ml-7 mb-4" large>Buy</v-btn>
-
-                  <p class="mt-4 text-caption">Guaranteed Safe Checkout</p>
-                </v-col>
-              </v-row>
-            </v-container>
+            <v-card-actions>
+              <v-btn text @click="close">Cancel</v-btn>
+              <v-btn color="green" @click="buy">Buy</v-btn>
+            </v-card-actions>
           </v-card>
         </v-dialog>
       </v-container>
