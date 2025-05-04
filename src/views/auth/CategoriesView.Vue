@@ -207,7 +207,6 @@ const products = {
           </v-col>
         </v-row>
 
-        <!-- Product Detail Modal -->
         <v-dialog v-model="selectedProduct" fullscreen transition="dialog-bottom-transition">
           <v-card>
             <v-toolbar flat>
@@ -232,7 +231,7 @@ const products = {
                   <span class="mx-2 text-h6">{{ quantity }}</span>
                   <v-btn icon @click="incrementQty"><v-icon>mdi-plus</v-icon></v-btn>
 
-                  <v-btn color="green" class="mt-4" large>ADD TO CART</v-btn>
+                  <v-btn color="green" class="mt-4 ml-7 mb-4" large>Buy</v-btn>
 
                   <p class="mt-4 text-caption">Guaranteed Safe Checkout</p>
                 </v-col>
