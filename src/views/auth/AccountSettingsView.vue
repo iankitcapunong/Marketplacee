@@ -129,6 +129,12 @@ function removePurchase(index) {
 <template>
   <v-app>
     <v-container fluid style="background-color: beige; min-height: 100vh">
+      <v-app-bar app color="green-lighten-4" dark>
+        <!-- Back to Dashboard Icon Button -->
+        <v-btn icon @click="$router.push('/dashboard')" class="mb-4 pt-5">
+          <v-icon>mdi-arrow-left</v-icon>
+        </v-btn>
+      </v-app-bar>
       <v-row class="pa-6 pt-15 mt-10">
         <!-- Sidebar -->
         <v-col cols="12" md="4">
@@ -136,7 +142,7 @@ function removePurchase(index) {
             <v-avatar size="100" class="mx-auto mb-4">
               <v-img src="" alt="Profile photo" />
             </v-avatar>
-            <div class="text-center font-weight-bold text-h6"></div>
+            <div class="text-center font-weight-bold text-h6">Kathleen Demain</div>
             <v-divider class="my-4" />
             <v-list dense nav>
               <v-list-item
