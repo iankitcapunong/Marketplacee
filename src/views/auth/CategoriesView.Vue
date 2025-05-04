@@ -218,28 +218,55 @@ const products = {
             </v-row>
           </v-col>
         </v-row>
-        <v-dialog v-model="dialog" max-width="500">
-          <v-card>
-            <v-img :src="product.image" height="200px" cover></v-img>
+        <v-dialog v-model="dialog" max-width="800">
+          <v-card class="pa-4">
+            <v-row>
+              <!-- Left: Product Image -->
+              <v-col cols="12" md="6">
+                <v-img :src="product.image" height="300" contain></v-img>
+              </v-col>
 
-            <v-card-title>{{ product.name }}</v-card-title>
+              <!-- Right: Product Info -->
+              <v-col cols="12" md="6">
+                <div class="d-flex justify-end">
+                  <v-btn icon @click="close">
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </div>
 
-            <v-card-text>
-              <div>Price: ₱{{ product.price }}</div>
+                <h2 class="text-h6 font-weight-bold">{{ product.name }}</h2>
+                <h3 class="text-h4 font-weight-bold">₱{{ product.price }}</h3>
 
-              <v-text-field
-                v-model.number="quantity"
-                type="number"
-                label="Quantity"
-                min="1"
-                class="mt-4"
-              ></v-text-field>
-            </v-card-text>
+                <v-list density="compact">
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title> Affordable and Fresh</v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-list-item>
+                    <v-list-item-content>
+                      <v-list-item-title> </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
 
-            <v-card-actions>
-              <v-btn text @click="close">Cancel</v-btn>
-              <v-btn color="green" @click="buy">Buy</v-btn>
-            </v-card-actions>
+                <v-chip color="green" text-color="white" class="ma-2">In stock</v-chip>
+
+                <div class="mt-4 mb-2 font-weight-bold">qty</div>
+                <div class="d-flex align-center">
+                  <v-btn icon @click="quantity = Math.max(1, quantity - 1)">
+                    <v-icon>mdi-minus</v-icon>
+                  </v-btn>
+                  <div class="mx-4">{{ quantity }}</div>
+                  <v-btn icon @click="quantity++">
+                    <v-icon>mdi-plus</v-icon>
+                  </v-btn>
+                </div>
+
+                <v-btn class="mt-4 ml-9" color="green" dark @click="buy"> Buy </v-btn>
+                <div class="mt-2 text-caption">Guaranteed Safe Checkout</div>
+              </v-col>
+            </v-row>
           </v-card>
         </v-dialog>
       </v-container>

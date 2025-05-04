@@ -10,13 +10,25 @@ const phone = ref('')
 // Sidebar Navigation
 const activeItem = ref('Account info')
 const items = ['Account info', 'My order', 'My address']
-
 function selectItem(item) {
   activeItem.value = item
 }
 
+// Orders (MUST be declared BEFORE use)
+const purchases = ref([])
+
 // Address Management
 const addresses = ref([])
+
+// Dialogs
+const showAddDialog = ref(false)
+const showEditDialog = ref(false)
+
+const tempName = ref('')
+const tempPhone = ref('')
+const tempDetails = ref('')
+const editingIndex = ref(null)
+
 onMounted(() => {
   const storedAddresses = localStorage.getItem('addresses')
   if (storedAddresses) {
@@ -38,6 +50,7 @@ onMounted(() => {
   }
 })
 
+// Watchers
 watch(
   addresses,
   (newVal) => {
@@ -46,18 +59,15 @@ watch(
   { deep: true },
 )
 
-// Orders
-const purchases = ref([])
+watch(
+  purchases,
+  (newVal) => {
+    localStorage.setItem('purchases', JSON.stringify(newVal))
+  },
+  { deep: true },
+)
 
-// Address dialog handling
-const showAddDialog = ref(false)
-const showEditDialog = ref(false)
-
-const tempName = ref('')
-const tempPhone = ref('')
-const tempDetails = ref('')
-const editingIndex = ref(null)
-
+// Address handlers
 function openAddDialog() {
   tempName.value = ''
   tempPhone.value = ''
@@ -104,6 +114,11 @@ function removeAddress(index) {
   if (!addresses.value[index].isDefault) {
     addresses.value.splice(index, 1)
   }
+}
+
+// Order removal
+function removePurchase(index) {
+  purchases.value.splice(index, 1)
 }
 </script>
 
@@ -175,6 +190,9 @@ function removeAddress(index) {
                     <div>Quantity: {{ purchase.quantity }}</div>
                     <div>Total: ₱{{ purchase.price * purchase.quantity }}</div>
                   </v-card-text>
+                  <v-card-actions>
+                    <v-btn color="red" text @click="removePurchase(index)">Delete</v-btn>
+                  </v-card-actions>
                 </v-card>
               </v-col>
             </v-row>
@@ -208,8 +226,8 @@ function removeAddress(index) {
                   </div>
                 </v-col>
                 <v-col cols="12" md="4" class="text-md-right">
-                  <v-btn variant="text" color="primary" class="mb-2" @click="openEditDialog(index)">
-                    Edit </v-btn
+                  <v-btn variant="text" color="primary" class="mb-2" @click="openEditDialog(index)"
+                    >Edit</v-btn
                   ><br />
                   <v-btn
                     variant="text"
@@ -217,17 +235,15 @@ function removeAddress(index) {
                     class="mb-2"
                     @click="setAsDefault(index)"
                     :disabled="addr.isDefault"
-                  >
-                    Set as Default </v-btn
+                    >Set as Default</v-btn
                   ><br />
                   <v-btn
                     variant="text"
                     color="error"
                     @click="removeAddress(index)"
                     :disabled="addr.isDefault"
+                    >Remove</v-btn
                   >
-                    Remove
-                  </v-btn>
                 </v-col>
               </v-row>
             </v-card>
