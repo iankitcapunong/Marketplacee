@@ -206,7 +206,7 @@ function removePurchase(index) {
               </v-col>
             </v-row>
           </v-card>
-
+          ``
           <v-card v-if="activeItem === 'My address'" class="pa-6" elevation="2">
             <v-row justify="space-between" align="center" class="mb-4">
               <v-col cols="12" md="auto">
