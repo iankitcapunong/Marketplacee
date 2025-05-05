@@ -6,7 +6,6 @@ import {
   confirmedValidator,
 } from '@/utils/validators'
 import { ref } from 'vue'
-import { supabase, formActionDefault } from '@/utils/supabase'
 
 const formDataDefault = {
   Name: '',
@@ -33,26 +32,6 @@ const onFormSubmit = () => {
 }
 </script>
 <template>
-  <v-alert
-    v-if="formAction.formSuccessMessage"
-    :text="formAction.formSuccessMessage"
-    title="Success!"
-    type="success"
-    variant="tonal"
-    density="compact"
-    borders="start"
-    closable
-  ></v-alert>
-  <v-alert
-    v-if="formAction.formErrorMessage"
-    :text="formAction.formErrorMessage"
-    title="Ooops!"
-    type="error"
-    variant="tonal"
-    density="compact"
-    borders="start"
-    closable
-  ></v-alert>
   <v-form ref="refVform" @submit.prevent="onFormSubmit">
     <div class="text-subtitle-1 text-medium-emphasis">Name</div>
     <v-text-field
@@ -108,16 +87,7 @@ const onFormSubmit = () => {
       ]"
     />
 
-    <v-btn
-      class="mt-4"
-      color="green"
-      size="default"
-      variant="tonal"
-      block
-      type="submit"
-      :disabled="formAction.formProcess"
-      :loading="formAction.formProcess"
-    >
+    <v-btn class="mt-4" color="green" size="default" variant="tonal" block type="submit">
       Create
     </v-btn>
   </v-form>

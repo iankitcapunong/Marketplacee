@@ -1,5 +1,5 @@
 <script setup>
-import signupform from '@/assets/components/auth/signupform.vue'
+import registerform from '@/assets/components/auth/registerform.vue'
 </script>
 
 <template>
@@ -17,7 +17,7 @@ import signupform from '@/assets/components/auth/signupform.vue'
             <v-card-title class="font-weight-black">Marketplace</v-card-title>
             <v-card-subtitle class="font-weight-light">CREATE ACCOUNT</v-card-subtitle>
           </v-card-item>
-          <signupform></signupform>
+          <registerform></registerform>
           <v-card-text class="text-center text">
             Already user?
             <router-link to="/" class="text-green text-decoration-none">
