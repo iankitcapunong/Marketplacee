@@ -19,9 +19,6 @@ import raweggsImg from '@/assets/images/raweggs.jpeg'
         class="mx-4"
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn icon @click="signOut" color="white">
-        <v-icon color="black">mdi-logout</v-icon>
-      </v-btn>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" class="lock-scrollbar" app>
