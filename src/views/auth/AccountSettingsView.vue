@@ -19,7 +19,36 @@ function saveProfile() {
   alert('Account info saved!')
 }
 
-// Load Account Info on mount
+// Sidebar Navigation
+const activeItem = ref('Account info')
+const items = ['Account info', 'My order', 'My address', 'Log out']
+function selectItem(item) {
+  if (item === 'Log out') {
+    logout()
+  } else {
+    activeItem.value = item
+  }
+}
+function logout() {
+  localStorage.clear()
+  alert('You have been logged out.')
+  // Optional: Redirect to login or homepage
+  // window.location.href = '/login'
+}
+
+// Orders
+const purchases = ref([])
+
+// Addresses
+const addresses = ref([])
+const showAddDialog = ref(false)
+const showEditDialog = ref(false)
+const tempName = ref('')
+const tempPhone = ref('')
+const tempDetails = ref('')
+const editingIndex = ref(null)
+
+// Load on mount
 onMounted(() => {
   const stored = JSON.parse(localStorage.getItem('profile') || '{}')
   firstName.value = stored.firstName || ''
@@ -37,25 +66,6 @@ onMounted(() => {
     purchases.value = JSON.parse(storedPurchases)
   }
 })
-
-// Sidebar Navigation
-const activeItem = ref('Account info')
-const items = ['Account info', 'My order', 'My address']
-function selectItem(item) {
-  activeItem.value = item
-}
-
-// Orders
-const purchases = ref([])
-
-// Addresses
-const addresses = ref([])
-const showAddDialog = ref(false)
-const showEditDialog = ref(false)
-const tempName = ref('')
-const tempPhone = ref('')
-const tempDetails = ref('')
-const editingIndex = ref(null)
 
 watch(
   addresses,
