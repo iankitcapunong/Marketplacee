@@ -2,53 +2,96 @@
 import { ref, computed, onMounted } from 'vue'
 import { createClient } from '@supabase/supabase-js'
 
-// Initialize Supabase client (use your actual URL and public API key)
+// Initialize Supabase client
 const supabase = createClient(
-  'https://jnqsnahipnolhgkedpjw.supabase.co', // Replace with your actual Supabase URL
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpucXNuYWhpcG5vbGhna2VkcGp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4OTczMzAsImV4cCI6MjA1ODQ3MzMzMH0.BEo-R_j5GY0l3754DvctK_c83ugRzpu7yV_sNB3skdg', // Replace with your actual Supabase anonymous API key
+  'https://jnqsnahipnolhgkedpjw.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpucXNuYWhpcG5vbGhna2VkcGp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4OTczMzAsImV4cCI6MjA1ODQ3MzMzMH0.BEo-R_j5GY0l3754DvctK_c83ugRzpu7yV_sNB3skdg',
 )
 
 // State variables
 const selectedCategory = ref(null)
 const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
 const products = ref([])
-const cart = ref([]) // Cart to hold selected products
+const cart = ref([])
+
+// Modal and quantity
+const showModal = ref(false)
+const selectedProduct = ref(null)
+const quantity = ref(1)
 
 // Fetch products from Supabase
 const fetchProducts = async () => {
-  const { data, error } = await supabase
-    .from('products') // Assuming 'products' is your table name
-    .select('id, name, price, image_url, type') // Ensure these columns exist in your table
-
+  const { data, error } = await supabase.from('products').select('id, name, price, image_url, type')
   if (error) {
-    console.error('Error fetching products:', error)
+    console.error('Error fetching products:', error.message)
   } else {
     products.value = data
   }
 }
 
-// Fetch products on component mount
+// On mount
 onMounted(() => {
   fetchProducts()
 })
 
-// Filter products based on the selected category
+// Filtered products
 const filteredProducts = computed(() => {
   return selectedCategory.value
     ? products.value.filter((product) => product.type === selectedCategory.value)
     : products.value
 })
 
-// Handle category selection
+// Handlers
 const selectCategory = (category) => {
   selectedCategory.value = category
 }
 
-// Add product to cart
-const addToCart = (product) => {
-  cart.value.push(product)
-  alert(`${product.name} added to your cart!`)
+const openProductModal = (product) => {
+  selectedProduct.value = product
+  quantity.value = 1
+  showModal.value = true
 }
+
+const closeModal = () => {
+  showModal.value = false
+}
+
+const increaseQty = () => {
+  quantity.value++
+}
+
+const decreaseQty = () => {
+  if (quantity.value > 1) quantity.value--
+}
+
+const confirmBuy = async () => {
+  if (!selectedProduct.value || !quantity.value) {
+    alert('Missing product or quantity.')
+    return
+  }
+
+  const purchase = {
+    name: selectedProduct.value.name,
+    price: selectedProduct.value.price,
+    quantity: quantity.value,
+    image: selectedProduct.value.image_url,
+    date: new Date().toISOString(),
+  }
+
+  const { data, error } = await supabase.from('purchases').insert([purchase])
+
+  if (error) {
+    console.error('Error inserting purchase:', error.message, error.details)
+    alert(`Failed to complete purchase:\n${error.message}`)
+  } else {
+    alert(`${quantity.value} x ${selectedProduct.value.name} successfully purchased!`)
+    cart.value.push({ ...selectedProduct.value, quantity: quantity.value })
+    closeModal()
+  }
+}
+
+// 🛡️ IMPORTANT: Ensure Supabase RLS is disabled or has this policy on the "purchases" table:
+// CREATE POLICY "Allow anyone to insert" ON purchases FOR INSERT USING (true);
 </script>
 
 <template>
@@ -83,6 +126,7 @@ const addToCart = (product) => {
               <v-list-item-title class="font-weight-bold">Categories</v-list-item-title>
             </v-list-item>
           </template>
+
           <v-list-item
             v-for="(category, i) in categories"
             :key="i"
@@ -93,6 +137,10 @@ const addToCart = (product) => {
             <v-list-item-title>{{ category }}</v-list-item-title>
           </v-list-item>
         </v-list-group>
+
+        <v-list-item to="/AccountSettings" class="text-decoration-none text-black">
+          <v-list-item-title class="font-weight-bold">Account Settings</v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
@@ -107,7 +155,6 @@ const addToCart = (product) => {
             <h1 v-else class="text-h4 font-weight-bold mb-4">{{ selectedCategory }}</h1>
 
             <v-row>
-              <!-- Display Products -->
               <v-col v-for="(product, index) in filteredProducts" :key="index" cols="12" md="3">
                 <v-card class="pa-4 text-center rounded-shaped" style="cursor: pointer">
                   <v-img :src="product.image_url" height="100" contain />
@@ -116,8 +163,7 @@ const addToCart = (product) => {
                   <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
                   <div>Butuan City, PH-13</div>
 
-                  <!-- Buy Button -->
-                  <v-btn @click="addToCart(product)" color="green" class="mt-2">Buy</v-btn>
+                  <v-btn @click="openProductModal(product)" color="green" class="mt-2">Buy</v-btn>
                 </v-card>
               </v-col>
             </v-row>
@@ -125,6 +171,38 @@ const addToCart = (product) => {
         </v-row>
       </v-container>
     </v-main>
+
+    <!-- Product Modal -->
+    <v-dialog v-model="showModal" max-width="600px">
+      <v-card class="pa-4" style="position: relative">
+        <v-btn
+          icon
+          @click="closeModal"
+          style="position: absolute; top: 10px; left: 10px; z-index: 10"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+
+        <v-card-text class="text-center">
+          <v-img :src="selectedProduct?.image_url" height="200" contain />
+
+          <div class="text-h6 mt-4">{{ selectedProduct?.name }}</div>
+          <div class="text-h5 font-weight-bold">₱{{ selectedProduct?.price }}</div>
+          <div>Affordable and Fresh</div>
+          <v-chip color="green" class="mt-2">In stock</v-chip>
+
+          <div class="mt-4">
+            <div class="text-subtitle-1 mb-2">qty</div>
+            <v-btn icon @click="decreaseQty"><v-icon>mdi-minus</v-icon></v-btn>
+            <span class="mx-2">{{ quantity }}</span>
+            <v-btn icon @click="increaseQty"><v-icon>mdi-plus</v-icon></v-btn>
+          </div>
+
+          <v-btn color="green" class="mt-4" @click="confirmBuy">BUY</v-btn>
+          <div class="mt-2 text-caption">Guaranteed Safe Checkout</div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 

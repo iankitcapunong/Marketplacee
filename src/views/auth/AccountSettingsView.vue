@@ -1,5 +1,11 @@
 <script setup>
 import { ref, watch, onMounted } from 'vue'
+import { createClient } from '@supabase/supabase-js'
+
+// Supabase Setup
+const supabaseUrl = 'https://jnqsnahipnolhgkedpjw.supabase.co'
+const supabaseKey = 'YOUR_SUPABASE_KEY'
+const supabase = createClient(supabaseUrl, supabaseKey)
 
 // Profile Info
 const firstName = ref('')
@@ -7,7 +13,7 @@ const lastName = ref('')
 const email = ref('')
 const phone = ref('')
 
-// Save Account Info
+// Save Account Info to LocalStorage
 function saveProfile() {
   const profile = {
     firstName: firstName.value,
@@ -21,7 +27,7 @@ function saveProfile() {
 
 // Sidebar Navigation
 const activeItem = ref('Account info')
-const items = ['Account info', 'My order', 'My address', 'Log out']
+const items = ['Account info', 'My Purchases', 'My address', 'Log out']
 function selectItem(item) {
   if (item === 'Log out') {
     logout()
@@ -32,41 +38,63 @@ function selectItem(item) {
 function logout() {
   localStorage.clear()
   alert('You have been logged out.')
-  // Optional: Redirect to login or homepage
-  // window.location.href = '/login'
 }
 
-// Orders
+// Purchases and Addresses Logic
 const purchases = ref([])
-
-// Addresses
 const addresses = ref([])
+
+// Dialog states
 const showAddDialog = ref(false)
 const showEditDialog = ref(false)
+
+// Temporary fields for address dialogs
 const tempName = ref('')
 const tempPhone = ref('')
 const tempDetails = ref('')
 const editingIndex = ref(null)
 
-// Load on mount
-onMounted(() => {
-  const stored = JSON.parse(localStorage.getItem('profile') || '{}')
-  firstName.value = stored.firstName || ''
-  lastName.value = stored.lastName || ''
-  email.value = stored.email || ''
-  phone.value = stored.phone || ''
-
-  const storedAddresses = localStorage.getItem('addresses')
-  if (storedAddresses) {
-    addresses.value = JSON.parse(storedAddresses)
+// Get user profile from localStorage
+const getProfile = () => {
+  const storedProfile = localStorage.getItem('profile')
+  if (storedProfile) {
+    const profileData = JSON.parse(storedProfile)
+    firstName.value = profileData.firstName || ''
+    lastName.value = profileData.lastName || ''
+    email.value = profileData.email || ''
+    phone.value = profileData.phone || ''
   }
+}
 
-  const storedPurchases = localStorage.getItem('purchases')
-  if (storedPurchases) {
-    purchases.value = JSON.parse(storedPurchases)
+// Fetch purchases for the logged-in user
+const fetchPurchases = async () => {
+  const profile = JSON.parse(localStorage.getItem('profile'))
+  if (!profile) return
+
+  try {
+    const { data, error } = await supabase
+      .from('purchases')
+      .select('*')
+      .eq('user_email', profile.email)
+      .order('date', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching purchases:', error)
+      return
+    }
+
+    purchases.value = data
+  } catch (err) {
+    console.error('Unexpected error fetching purchases:', err)
   }
-})
+}
 
+// Remove purchase (to be implemented as needed)
+const removePurchase = (index) => {
+  console.log('Remove purchase at index:', index)
+}
+
+// Watch addresses and persist them to localStorage
 watch(
   addresses,
   (val) => {
@@ -75,14 +103,7 @@ watch(
   { deep: true },
 )
 
-watch(
-  purchases,
-  (val) => {
-    localStorage.setItem('purchases', JSON.stringify(val))
-  },
-  { deep: true },
-)
-
+// Address dialog actions
 function openAddDialog() {
   tempName.value = ''
   tempPhone.value = ''
@@ -131,9 +152,16 @@ function removeAddress(index) {
   }
 }
 
-function removePurchase(index) {
-  purchases.value.splice(index, 1)
-}
+// Load data on mounted
+onMounted(() => {
+  getProfile()
+  fetchPurchases()
+
+  const storedAddresses = localStorage.getItem('addresses')
+  if (storedAddresses) {
+    addresses.value = JSON.parse(storedAddresses)
+  }
+})
 </script>
 
 <template>
@@ -167,6 +195,7 @@ function removePurchase(index) {
         </v-col>
 
         <v-col cols="12" md="8">
+          <!-- Account Info -->
           <v-card v-if="activeItem === 'Account info'" class="pa-6" elevation="2">
             <h2 class="mb-6">Account Info</h2>
             <v-row>
@@ -186,10 +215,17 @@ function removePurchase(index) {
             <v-btn color="green" class="mt-4" @click="saveProfile">Save</v-btn>
           </v-card>
 
-          <v-card v-if="activeItem === 'My order'" class="pa-6" elevation="2">
-            <h2 class="mb-4">My Orders</h2>
+          <!-- Purchases -->
+          <v-card v-if="activeItem === 'My Purchases'" class="pa-6" elevation="2">
+            <h2 class="mb-4">My Purchases</h2>
             <v-row>
-              <v-col v-for="(purchase, index) in purchases" :key="index" cols="12" sm="6" md="4">
+              <v-col
+                v-for="(purchase, index) in purchases"
+                :key="purchase.id"
+                cols="12"
+                sm="6"
+                md="4"
+              >
                 <v-card>
                   <v-img :src="purchase.image" height="200px" class="rounded-t" cover />
                   <v-card-title>{{ purchase.name }}</v-card-title>
@@ -206,7 +242,8 @@ function removePurchase(index) {
               </v-col>
             </v-row>
           </v-card>
-          ``
+
+          <!-- Addresses -->
           <v-card v-if="activeItem === 'My address'" class="pa-6" elevation="2">
             <v-row justify="space-between" align="center" class="mb-4">
               <v-col cols="12" md="auto">
@@ -229,16 +266,17 @@ function removePurchase(index) {
                   </div>
                 </v-col>
                 <v-col cols="12" md="4" class="text-md-right">
-                  <v-btn variant="text" color="primary" @click="openEditDialog(index)">Edit</v-btn
-                  ><br />
+                  <v-btn variant="text" color="primary" @click="openEditDialog(index)">Edit</v-btn>
+                  <br />
                   <v-btn
                     variant="text"
                     color="green"
                     @click="setAsDefault(index)"
                     :disabled="addr.isDefault"
                   >
-                    Set as Default </v-btn
-                  ><br />
+                    Set as Default
+                  </v-btn>
+                  <br />
                   <v-btn
                     variant="text"
                     color="error"
