@@ -1,123 +1,61 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { createClient } from '@supabase/supabase-js'
 
-const drawer = ref(true)
-const categoriesOpen = ref(false)
+// Initialize Supabase client (use your actual URL and public API key)
+const supabase = createClient(
+  'https://jnqsnahipnolhgkedpjw.supabase.co', // Replace with your actual Supabase URL
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpucXNuYWhpcG5vbGhna2VkcGp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4OTczMzAsImV4cCI6MjA1ODQ3MzMzMH0.BEo-R_j5GY0l3754DvctK_c83ugRzpu7yV_sNB3skdg', // Replace with your actual Supabase anonymous API key
+)
+
+// State variables
 const selectedCategory = ref(null)
-const selectedProduct = ref(null)
-const dialog = ref(false)
-const product = ref({})
-const quantity = ref(1)
+const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
+const products = ref([])
+const cart = ref([]) // Cart to hold selected products
 
+// Fetch products from Supabase
+const fetchProducts = async () => {
+  const { data, error } = await supabase
+    .from('products') // Assuming 'products' is your table name
+    .select('id, name, price, image_url, type') // Ensure these columns exist in your table
+
+  if (error) {
+    console.error('Error fetching products:', error)
+  } else {
+    products.value = data
+  }
+}
+
+// Fetch products on component mount
+onMounted(() => {
+  fetchProducts()
+})
+
+// Filter products based on the selected category
+const filteredProducts = computed(() => {
+  return selectedCategory.value
+    ? products.value.filter((product) => product.type === selectedCategory.value)
+    : products.value
+})
+
+// Handle category selection
 const selectCategory = (category) => {
   selectedCategory.value = category
 }
 
-const viewProduct = (p) => {
-  product.value = p
-  quantity.value = 1
-  dialog.value = true
-}
-
-const close = () => {
-  dialog.value = false
-}
-
-const buy = () => {
-  const newPurchase = {
-    name: product.value.name,
-    price: product.value.price,
-    image: product.value.image,
-    quantity: quantity.value,
-    date: new Date().toLocaleString(),
-  }
-
-  const stored = localStorage.getItem('purchases')
-  const purchases = stored ? JSON.parse(stored) : []
-  purchases.push(newPurchase)
-  localStorage.setItem('purchases', JSON.stringify(purchases))
-
-  close()
-}
-
-// Images
-import sayoteImg from '@/assets/images/sayote.jpeg'
-import pinyaImg from '@/assets/images/pinya.jpeg'
-import sagingImg from '@/assets/images/saging.jpeg'
-import chickenImg from '@/assets/images/chicken.jpeg'
-import porkchopsImg from '@/assets/images/porkchops.png'
-import melonImg from '@/assets/images/melon.jpeg'
-import porkbellyImg from '@/assets/images/porkbelly.jpeg'
-import dilisImg from '@/assets/images/dilis.jpeg'
-import fishImg from '@/assets/images/fish.jpeg'
-import tunaImg from '@/assets/images/tuna.jpg'
-import tilapiaImg from '@/assets/images/tilapia.jpeg'
-import galungongImg from '@/assets/images/galungong.png'
-import sapsapImg from '@/assets/images/sapsap.png'
-import tambakolImg from '@/assets/images/tambakol.jpeg'
-import tambanImg from '@/assets/images/tamban.png'
-import cabbageImg from '@/assets/images/cabbage.jpeg'
-import carrrotImg from '@/assets/images/carrrot.jpeg'
-import patatasImg from '@/assets/images/patatas.jpeg'
-import PechayImg from '@/assets/images/Pechay.jpeg'
-import luyaImg from '@/assets/images/luya.jpeg'
-import kalabasaImg from '@/assets/images/kalabasa.jpeg'
-import whiteradishImg from '@/assets/images/whiteradish.jpeg'
-import drumstickImg from '@/assets/images/drumstick.jpeg'
-import beefImg from '@/assets/images/beef.jpeg'
-import chickenwingsImg from '@/assets/images/chickenwings.jpg'
-import spareribsImg from '@/assets/images/spareribs.jpg'
-import breastImg from '@/assets/images/breast.jpg'
-import ManggoImg from '@/assets/images/Manggo.jpeg'
-import tomatowhiteImg from '@/assets/images/tomatowhite.jpeg'
-import rambutanImg from '@/assets/images/rambutan.png'
-import appolImg from '@/assets/images/appol.png'
-import mangosteenImg from '@/assets/images/mangosteen.jpeg'
-
-const categories = ['Vegetables', 'Fish', 'Meat', 'Fruits']
-
-const products = {
-  all: [
-    { name: 'Sayote', price: 10, image: sayoteImg, type: 'Vegetables' },
-    { name: 'Pineapple', price: 160, image: pinyaImg, type: 'Fruits' },
-    { name: 'Banana (LAKATAN)', price: 50, image: sagingImg, type: 'Fruits' },
-    { name: 'Chicken', price: 260, image: chickenImg, type: 'Meat' },
-    { name: 'Watermelon', price: 50, image: melonImg, type: 'Fruits' },
-    { name: 'Pork Chops', price: 200, image: porkchopsImg, type: 'Meat' },
-    { name: 'Pork Belly', price: 300, image: porkbellyImg, type: 'Meat' },
-    { name: 'Dilis', price: 100, image: dilisImg, type: 'Fish' },
-    { name: 'Milk Fish', price: 120, image: fishImg, type: 'Fish' },
-    { name: 'Tuna', price: 170, image: tunaImg, type: 'Fish' },
-    { name: 'Tilapia', price: 150, image: tilapiaImg, type: 'Fish' },
-    { name: 'Galungong', price: 100, image: galungongImg, type: 'Fish' },
-    { name: 'Sapsap', price: 250, image: sapsapImg, type: 'Fish' },
-    { name: 'Tambakol', price: 200, image: tambakolImg, type: 'Fish' },
-    { name: 'Tamban', price: 200, image: tambanImg, type: 'Fish' },
-    { name: 'Cabbage', price: 26, image: cabbageImg, type: 'Vegetables' },
-    { name: 'Carrots', price: 75, image: carrrotImg, type: 'Vegetables' },
-    { name: 'Potato', price: 150, image: patatasImg, type: 'Vegetables' },
-    { name: 'Pechay', price: 50, image: PechayImg, type: 'Vegetables' },
-    { name: 'Ginger', price: 70, image: luyaImg, type: 'Vegetables' },
-    { name: 'Kalabasa', price: 50, image: kalabasaImg, type: 'Vegetables' },
-    { name: 'White Radish', price: 50, image: whiteradishImg, type: 'Vegetables' },
-    { name: 'Chicken Drumstick', price: 150, image: drumstickImg, type: 'Meat' },
-    { name: 'Beef', price: 370, image: beefImg, type: 'Meat' },
-    { name: 'Chicken Wings', price: 150, image: chickenwingsImg, type: 'Meat' },
-    { name: 'Pork Spare Ribs', price: 320, image: spareribsImg, type: 'Meat' },
-    { name: 'Chicken Breast', price: 120, image: breastImg, type: 'Meat' },
-    { name: 'Manggo', price: 120, image: ManggoImg, type: 'Fruits' },
-    { name: 'Tomato', price: 70, image: tomatowhiteImg, type: 'Fruits' },
-    { name: 'Rambutan', price: 80, image: rambutanImg, type: 'Fruits' },
-    { name: 'Apple', price: 160, image: appolImg, type: 'Fruits' },
-    { name: 'Mangosteen', price: 120, image: mangosteenImg, type: 'Fruits' },
-  ],
+// Add product to cart
+const addToCart = (product) => {
+  cart.value.push(product)
+  alert(`${product.name} added to your cart!`)
 }
 </script>
 
 <template>
   <v-app>
+    <!-- App Bar -->
     <v-app-bar app color="green-lighten-4" dark>
-      <v-app-bar-nav-icon @click="drawer = !drawer" />
+      <v-app-bar-nav-icon />
       <v-text-field
         hide-details
         flat
@@ -132,19 +70,19 @@ const products = {
       </v-avatar>
     </v-app-bar>
 
-    <v-navigation-drawer v-model="drawer" app>
+    <!-- Sidebar Navigation -->
+    <v-navigation-drawer app>
       <v-list>
         <v-list-item to="/Dashboard" class="text-decoration-none text-black">
           <v-list-item-title class="font-weight-bold">Dashboard</v-list-item-title>
         </v-list-item>
 
-        <v-list-group v-model="categoriesOpen">
+        <v-list-group>
           <template v-slot:activator="{ props }">
             <v-list-item v-bind="props">
               <v-list-item-title class="font-weight-bold">Categories</v-list-item-title>
             </v-list-item>
           </template>
-
           <v-list-item
             v-for="(category, i) in categories"
             :key="i"
@@ -155,13 +93,10 @@ const products = {
             <v-list-item-title>{{ category }}</v-list-item-title>
           </v-list-item>
         </v-list-group>
-
-        <v-list-item to="/AccountSettings" class="text-decoration-none text-black">
-          <v-list-item-title class="font-weight-bold">Account Settings</v-list-item-title>
-        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
+    <!-- Main Content -->
     <v-main>
       <v-container fluid style="background-color: beige; min-height: 100vh">
         <v-row class="pa-4 rounded-shaped">
@@ -172,103 +107,22 @@ const products = {
             <h1 v-else class="text-h4 font-weight-bold mb-4">{{ selectedCategory }}</h1>
 
             <v-row>
-              <template v-if="!selectedCategory">
-                <v-col
-                  v-for="(product, index) in products.all.slice(0, 8)"
-                  :key="index"
-                  cols="12"
-                  md="3"
-                >
-                  <v-card
-                    class="pa-4 text-center rounded-shaped"
-                    @click="viewProduct(product)"
-                    style="cursor: pointer"
-                  >
-                    <v-img :src="product.image" height="100" contain />
-                    <div class="font-weight-bold mt-2">{{ product.name }}</div>
-                    <div>Per Kilo</div>
-                    <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
-                    <div>Butuan City, PH-13</div>
-                  </v-card>
-                </v-col>
-              </template>
+              <!-- Display Products -->
+              <v-col v-for="(product, index) in filteredProducts" :key="index" cols="12" md="3">
+                <v-card class="pa-4 text-center rounded-shaped" style="cursor: pointer">
+                  <v-img :src="product.image_url" height="100" contain />
+                  <div class="font-weight-bold mt-2">{{ product.name }}</div>
+                  <div>Per Kilo</div>
+                  <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
+                  <div>Butuan City, PH-13</div>
 
-              <template v-else>
-                <v-col
-                  v-for="(product, index) in products.all.filter(
-                    (p) => p.type === selectedCategory,
-                  )"
-                  :key="index"
-                  cols="12"
-                  md="3"
-                >
-                  <v-card
-                    class="pa-4 text-center rounded-shaped"
-                    @click="viewProduct(product)"
-                    style="cursor: pointer"
-                  >
-                    <v-img :src="product.image" height="100" contain />
-                    <div class="font-weight-bold mt-2">{{ product.name }}</div>
-                    <div>Per Kilo</div>
-                    <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
-                    <div>Butuan City, PH-13</div>
-                  </v-card>
-                </v-col>
-              </template>
+                  <!-- Buy Button -->
+                  <v-btn @click="addToCart(product)" color="green" class="mt-2">Buy</v-btn>
+                </v-card>
+              </v-col>
             </v-row>
           </v-col>
         </v-row>
-        <v-dialog v-model="dialog" max-width="800">
-          <v-card class="pa-4">
-            <v-row>
-              <!-- Left: Product Image -->
-              <v-col cols="12" md="6">
-                <v-img :src="product.image" height="300" contain></v-img>
-              </v-col>
-
-              <!-- Right: Product Info -->
-              <v-col cols="12" md="6">
-                <div class="d-flex justify-end">
-                  <v-btn icon @click="close">
-                    <v-icon>mdi-close</v-icon>
-                  </v-btn>
-                </div>
-
-                <h2 class="text-h6 font-weight-bold">{{ product.name }}</h2>
-                <h3 class="text-h4 font-weight-bold">₱{{ product.price }}</h3>
-
-                <v-list density="compact">
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title> Affordable and Fresh</v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                  <v-list-item>
-                    <v-list-item-content>
-                      <v-list-item-title> </v-list-item-title>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list>
-
-                <v-chip color="green" text-color="white" class="ma-2">In stock</v-chip>
-
-                <div class="mt-4 mb-2 font-weight-bold">qty</div>
-                <div class="d-flex align-center">
-                  <v-btn icon @click="quantity = Math.max(1, quantity - 1)">
-                    <v-icon>mdi-minus</v-icon>
-                  </v-btn>
-                  <div class="mx-4">{{ quantity }}</div>
-                  <v-btn icon @click="quantity++">
-                    <v-icon>mdi-plus</v-icon>
-                  </v-btn>
-                </div>
-
-                <v-btn class="mt-4 ml-9" color="green" dark @click="buy"> Buy </v-btn>
-                <div class="mt-2 text-caption">Guaranteed Safe Checkout</div>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-dialog>
       </v-container>
     </v-main>
   </v-app>
