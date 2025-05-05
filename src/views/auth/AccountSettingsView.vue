@@ -140,13 +140,11 @@ function removePurchase(index) {
   <v-app>
     <v-container fluid style="background-color: beige; min-height: 100vh">
       <v-app-bar app color="green-lighten-4" dark>
-        <!-- Back to Dashboard Icon Button -->
         <v-btn icon @click="$router.push('/dashboard')" class="mb-4 pt-5">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </v-app-bar>
       <v-row class="pa-6 pt-15 mt-10">
-        <!-- Sidebar -->
         <v-col cols="12" md="4">
           <v-card class="pa-4" elevation="2">
             <v-avatar size="100" class="mx-auto mb-4">
@@ -168,9 +166,7 @@ function removePurchase(index) {
           </v-card>
         </v-col>
 
-        <!-- Main Content -->
         <v-col cols="12" md="8">
-          <!-- Account Info -->
           <v-card v-if="activeItem === 'Account info'" class="pa-6" elevation="2">
             <h2 class="mb-6">Account Info</h2>
             <v-row>
@@ -190,7 +186,6 @@ function removePurchase(index) {
             <v-btn color="green" class="mt-4" @click="saveProfile">Save</v-btn>
           </v-card>
 
-          <!-- My Orders -->
           <v-card v-if="activeItem === 'My order'" class="pa-6" elevation="2">
             <h2 class="mb-4">My Orders</h2>
             <v-row>
@@ -212,7 +207,6 @@ function removePurchase(index) {
             </v-row>
           </v-card>
 
-          <!-- My Addresses -->
           <v-card v-if="activeItem === 'My address'" class="pa-6" elevation="2">
             <v-row justify="space-between" align="center" class="mb-4">
               <v-col cols="12" md="auto">
