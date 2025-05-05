@@ -17,6 +17,7 @@ import loginform from '@/assets/components/auth/loginform.vue'
             <v-card-title class="font-weight-black">Marketplace</v-card-title>
             <v-card-subtitle class="font-weight-light">LOG IN TO CONTINUE</v-card-subtitle>
           </v-card-item>
+
           <loginform></loginform>
 
           <v-card-text class="text-center text">
