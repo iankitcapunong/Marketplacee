@@ -84,9 +84,6 @@ const confirmPurchases = () => {
         class="mx-4"
       />
       <v-spacer />
-      <v-avatar color="white">
-        <span class="text-black font-weight-bold">KD</span>
-      </v-avatar>
     </v-app-bar>
 
     <!-- Navigation Drawer -->
