@@ -5,10 +5,14 @@ import {
   passwordValidator,
   confirmedValidator,
 } from '@/utils/validators'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { supabase, formActionDefault } from '@/utils/supabase'
 import AlertNotification from '@/assets/common/AlertNotification.vue'
-import { useRegister } from '@/composable/auth/register.js'
+
+const router = useRouter()
+
+// Default form values
 const formDataDefault = {
   Name: '',
   email: '',
@@ -17,14 +21,16 @@ const formDataDefault = {
 }
 
 const formData = ref({ ...formDataDefault })
-
-const formAction = ref({
-  ...formActionDefault,
-})
+const formAction = ref({ ...formActionDefault })
 
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
 const refVform = ref()
+
+// Reactive validator for password confirmation
+const confirmPasswordRule = computed(() =>
+  confirmedValidator(formData.value.password_confirmation, formData.value.password),
+)
 
 const onSubmit = async () => {
   formAction.value = { ...formActionDefault }
@@ -46,8 +52,11 @@ const onSubmit = async () => {
     formAction.value.formStatus = error.status
   } else if (data) {
     console.log(data)
-    formAction.value.formSuccessMessage = 'Successfully Register Account.'
+    formAction.value.formSuccessMessage = 'Successfully Registered Account.'
+    router.replace('/system/dashboard')
   }
+
+  refVform.value?.reset()
   formAction.value.formProcess = false
 }
 
@@ -57,11 +66,13 @@ const onFormSubmit = () => {
   })
 }
 </script>
+
 <template>
   <AlertNotification
     :form-success-message="formAction.formSuccessMessage"
     :form-error-message="formAction.formErrorMessage"
-  ></AlertNotification>
+  />
+
   <v-form class="mt-5" ref="refVform" @submit.prevent="onFormSubmit">
     <div class="text-subtitle-1 text-medium-emphasis">Name</div>
     <v-text-field
@@ -80,11 +91,7 @@ const onFormSubmit = () => {
       :rules="[requiredValidator, emailValidator]"
     />
 
-    <div
-      class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between text-green"
-    >
-      Password
-    </div>
+    <div class="text-subtitle-1 text-medium-emphasis text-green">Password</div>
     <v-text-field
       v-model="formData.password"
       :append-inner-icon="isPasswordVisible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -97,11 +104,7 @@ const onFormSubmit = () => {
       :rules="[requiredValidator, passwordValidator]"
     />
 
-    <div
-      class="text-subtitle-1 text-medium-emphasis d-flex align-center justify-space-between text-green"
-    >
-      Confirm Password
-    </div>
+    <div class="text-subtitle-1 text-medium-emphasis text-green">Confirm Password</div>
     <v-text-field
       v-model="formData.password_confirmation"
       :append-inner-icon="isPasswordConfirmVisible ? 'mdi-eye-off' : 'mdi-eye'"
@@ -111,10 +114,7 @@ const onFormSubmit = () => {
       placeholder="*******"
       variant="outlined"
       @click:append-inner="isPasswordConfirmVisible = !isPasswordConfirmVisible"
-      :rules="[
-        requiredValidator,
-        confirmedValidator(formData.password_confirmation, formData.password),
-      ]"
+      :rules="[requiredValidator, confirmPasswordRule]"
     />
 
     <v-btn

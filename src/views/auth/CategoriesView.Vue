@@ -89,7 +89,7 @@ const confirmPurchases = () => {
     <!-- Navigation Drawer -->
     <v-navigation-drawer app>
       <v-list>
-        <v-list-item to="/Dashboard" class="text-decoration-none text-black">
+        <v-list-item to="/system/dashboard" class="text-decoration-none text-black">
           <v-list-item-title class="font-weight-bold">Dashboard</v-list-item-title>
         </v-list-item>
 

@@ -140,7 +140,7 @@ function removePurchase(index) {
   <v-app>
     <v-container fluid style="background-color: beige; min-height: 100vh">
       <v-app-bar app color="green-lighten-4" dark>
-        <v-btn icon @click="$router.push('/dashboard')" class="mb-4 pt-5">
+        <v-btn icon @click="$router.push('/system/dashboard')" class="mb-4 pt-5">
           <v-icon>mdi-arrow-left</v-icon>
         </v-btn>
       </v-app-bar>

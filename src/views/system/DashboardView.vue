@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import ProfileHeader from '@/assets/layout/navigation/ProfileHeader.vue'
 
 const drawer = ref(false)
 import tomatoImg from '@/assets/images/tomato.jpeg'
@@ -20,13 +19,11 @@ import raweggsImg from '@/assets/images/raweggs.jpeg'
         class="mx-4"
       ></v-text-field>
       <v-spacer> </v-spacer>
-
-      <TopProfileNavigation v-if="isLoggedIn"></TopProfileNavigation>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" class="lock-scrollbar" app>
       <v-list>
-        <v-list-item to="/Dashboard" router class="text-decoration-none text-black">
+        <v-list-item to="/system/dashboard" router class="text-decoration-none text-black">
           <v-list-item-title class="font-weight-bold">Dashboard</v-list-item-title>
         </v-list-item>
 
