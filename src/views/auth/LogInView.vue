@@ -17,12 +17,11 @@ import loginform from '@/assets/components/auth/loginform.vue'
             <v-card-title class="font-weight-black">Marketplace</v-card-title>
             <v-card-subtitle class="font-weight-light">LOG IN TO CONTINUE</v-card-subtitle>
           </v-card-item>
-
           <loginform></loginform>
 
           <v-card-text class="text-center text">
             New User?
-            <router-link to="/SignUp" class="text-decoration-none">
+            <router-link to="/Register" class="text-decoration-none">
               <a
                 class="text-green text-decoration-none"
                 href="#"

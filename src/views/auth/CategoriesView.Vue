@@ -23,18 +23,17 @@ const quantity = ref(1)
 const fetchProducts = async () => {
   const { data, error } = await supabase.from('products').select('id, name, price, image_url, type')
   if (error) {
-    console.error('Error fetching products:', error.message)
+    console.error('Error fetching products:', error)
   } else {
     products.value = data
   }
 }
 
-// On mount
 onMounted(() => {
   fetchProducts()
 })
 
-// Filtered products
+// Computed: filtered products
 const filteredProducts = computed(() => {
   return selectedCategory.value
     ? products.value.filter((product) => product.type === selectedCategory.value)
@@ -64,34 +63,11 @@ const decreaseQty = () => {
   if (quantity.value > 1) quantity.value--
 }
 
-const confirmBuy = async () => {
-  if (!selectedProduct.value || !quantity.value) {
-    alert('Missing product or quantity.')
-    return
-  }
-
-  const purchase = {
-    name: selectedProduct.value.name,
-    price: selectedProduct.value.price,
-    quantity: quantity.value,
-    image: selectedProduct.value.image_url,
-    date: new Date().toISOString(),
-  }
-
-  const { data, error } = await supabase.from('purchases').insert([purchase])
-
-  if (error) {
-    console.error('Error inserting purchase:', error.message, error.details)
-    alert(`Failed to complete purchase:\n${error.message}`)
-  } else {
-    alert(`${quantity.value} x ${selectedProduct.value.name} successfully purchased!`)
-    cart.value.push({ ...selectedProduct.value, quantity: quantity.value })
-    closeModal()
-  }
+const confirmPurchases = () => {
+  cart.value.push({ ...selectedProduct.value, quantity: quantity.value })
+  alert(`${quantity.value} x ${selectedProduct.value.name} Purchases Complete!`)
+  closeModal()
 }
-
-// 🛡️ IMPORTANT: Ensure Supabase RLS is disabled or has this policy on the "purchases" table:
-// CREATE POLICY "Allow anyone to insert" ON purchases FOR INSERT USING (true);
 </script>
 
 <template>
@@ -113,7 +89,7 @@ const confirmBuy = async () => {
       </v-avatar>
     </v-app-bar>
 
-    <!-- Sidebar Navigation -->
+    <!-- Navigation Drawer -->
     <v-navigation-drawer app>
       <v-list>
         <v-list-item to="/Dashboard" class="text-decoration-none text-black">
@@ -149,10 +125,9 @@ const confirmBuy = async () => {
       <v-container fluid style="background-color: beige; min-height: 100vh">
         <v-row class="pa-4 rounded-shaped">
           <v-col cols="12">
-            <h1 v-if="!selectedCategory" class="text-h4 font-weight-bold mb-4">
-              MOST BUY IN STORE
+            <h1 class="text-h4 font-weight-bold mb-4">
+              {{ selectedCategory ? selectedCategory : 'MOST BUY IN STORE' }}
             </h1>
-            <h1 v-else class="text-h4 font-weight-bold mb-4">{{ selectedCategory }}</h1>
 
             <v-row>
               <v-col v-for="(product, index) in filteredProducts" :key="index" cols="12" md="3">
@@ -162,7 +137,6 @@ const confirmBuy = async () => {
                   <div>Per Kilo</div>
                   <div class="text-h6 font-weight-bold">₱{{ product.price }}</div>
                   <div>Butuan City, PH-13</div>
-
                   <v-btn @click="openProductModal(product)" color="green" class="mt-2">Buy</v-btn>
                 </v-card>
               </v-col>
@@ -174,18 +148,14 @@ const confirmBuy = async () => {
 
     <!-- Product Modal -->
     <v-dialog v-model="showModal" max-width="600px">
-      <v-card class="pa-4" style="position: relative">
-        <v-btn
-          icon
-          @click="closeModal"
-          style="position: absolute; top: 10px; left: 10px; z-index: 10"
-        >
+      <v-card style="position: relative">
+        <!-- Top-left close button -->
+        <v-btn icon @click="closeModal" style="position: absolute; top: 8px; left: 8px; z-index: 1">
           <v-icon>mdi-close</v-icon>
         </v-btn>
 
-        <v-card-text class="text-center">
+        <v-card-text class="text-center pt-10">
           <v-img :src="selectedProduct?.image_url" height="200" contain />
-
           <div class="text-h6 mt-4">{{ selectedProduct?.name }}</div>
           <div class="text-h5 font-weight-bold">₱{{ selectedProduct?.price }}</div>
           <div>Affordable and Fresh</div>
@@ -198,7 +168,7 @@ const confirmBuy = async () => {
             <v-btn icon @click="increaseQty"><v-icon>mdi-plus</v-icon></v-btn>
           </div>
 
-          <v-btn color="green" class="mt-4" @click="confirmBuy">BUY</v-btn>
+          <v-btn color="green" class="mt-4" @click="confirmPurchases">BUY</v-btn>
           <div class="mt-2 text-caption">Guaranteed Safe Checkout</div>
         </v-card-text>
       </v-card>

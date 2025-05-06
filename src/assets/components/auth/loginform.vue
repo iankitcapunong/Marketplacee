@@ -1,6 +1,5 @@
 <script setup>
 import { requiredValidator, emailValidator } from '@/utils/validators'
-
 import { ref } from 'vue'
 const refVform = ref()
 
@@ -53,10 +52,10 @@ const onFormSubmit = () => {
       @click:append-inner="isPasswordVisible = !isPasswordVisible"
       :rules="[requiredValidator]"
     ></v-text-field>
-    <RouterLink to="/Dashboard" class="text-decoration-none">
+    <router-link to="/Dashboard">
       <v-btn class="mt-4" color="green" size="default" variant="tonal" block @click="onFormSubmit">
         Log In
       </v-btn>
-    </RouterLink>
+    </router-link>
   </v-form>
 </template>
