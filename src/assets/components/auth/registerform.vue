@@ -6,7 +6,9 @@ import {
   confirmedValidator,
 } from '@/utils/validators'
 import { ref } from 'vue'
-
+import { supabase, formActionDefault } from '@/utils/supabase'
+import AlertNotification from '@/assets/common/AlertNotification.vue'
+import { useRegister } from '@/composable/auth/register.js'
 const formDataDefault = {
   Name: '',
   email: '',
@@ -16,13 +18,37 @@ const formDataDefault = {
 
 const formData = ref({ ...formDataDefault })
 
+const formAction = ref({
+  ...formActionDefault,
+})
+
 const isPasswordVisible = ref(false)
 const isPasswordConfirmVisible = ref(false)
-
 const refVform = ref()
 
-const onSubmit = () => {
-  alert('Form submitted: ' + JSON.stringify(formData.value))
+const onSubmit = async () => {
+  formAction.value = { ...formActionDefault }
+  formAction.value.formProcess = true
+
+  const { data, error } = await supabase.auth.signUp({
+    email: formData.value.email,
+    password: formData.value.password,
+    options: {
+      data: {
+        name: formData.value.Name,
+      },
+    },
+  })
+
+  if (error) {
+    console.log(error)
+    formAction.value.formErrorMessage = error.message
+    formAction.value.formStatus = error.status
+  } else if (data) {
+    console.log(data)
+    formAction.value.formSuccessMessage = 'Successfully Register Account.'
+  }
+  formAction.value.formProcess = false
 }
 
 const onFormSubmit = () => {
@@ -32,7 +58,11 @@ const onFormSubmit = () => {
 }
 </script>
 <template>
-  <v-form ref="refVform" @submit.prevent="onFormSubmit">
+  <AlertNotification
+    :form-success-message="formAction.formSuccessMessage"
+    :form-error-message="formAction.formErrorMessage"
+  ></AlertNotification>
+  <v-form class="mt-5" ref="refVform" @submit.prevent="onFormSubmit">
     <div class="text-subtitle-1 text-medium-emphasis">Name</div>
     <v-text-field
       v-model="formData.Name"
@@ -87,7 +117,16 @@ const onFormSubmit = () => {
       ]"
     />
 
-    <v-btn class="mt-4" color="green" size="default" variant="tonal" block type="submit">
+    <v-btn
+      class="mt-4"
+      color="green"
+      size="default"
+      variant="tonal"
+      block
+      type="submit"
+      :disabled="formAction.formProcess"
+      :loading="formAction.formProcess"
+    >
       Create
     </v-btn>
   </v-form>
